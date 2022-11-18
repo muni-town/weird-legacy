@@ -1,1 +1,6 @@
 dist/
+target/
+Cargo.lock
+history.txt
+weirddb/
+
