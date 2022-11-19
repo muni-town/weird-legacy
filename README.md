@@ -1,6 +1,22 @@
 # weird.one
 Local-first linkspage generator
 
+## Usage
+You'll need Perseus and SurrealDB.  
+Start the SurrealDB instance. 
+```
+surreal start -u root -p root --log debug "file://weirddb"
+```
+
+
+Start Perseus
+```
+perseus serve -w
+```
+
+
+Go to `localhost:8080`
+
 ### Introduction
 
 We're building a linksapp (linktree, bio.link et.al.) for developers. It will interface with the GitHub network and API.
