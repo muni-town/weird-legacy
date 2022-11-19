@@ -3,7 +3,7 @@ Local-first linkspage generator
 
 ## Usage
 You'll need Perseus and SurrealDB.  
-Start the SurrealDB instance. _You need to manually add some data if its the first time_.
+Start the SurrealDB instance. 
 ```
 surreal start -u root -p root --log debug "file://weirddb"
 ```
