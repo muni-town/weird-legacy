@@ -25,6 +25,11 @@ In our more expansve vision of this app we see it as the beginning of a new kind
 
 https://blog.jim-nielsen.com/2022/other-peoples-websites/
 
+*Weird is a..*
+- [Network of shared purpose](https://github.com/commune-org/weird/issues/9)
+- [Progressively advanced CMS](https://github.com/commune-org/weird/issues/5)
+- [Web identity aggregator](https://github.com/commune-org/weird/issues/1)
+
 ### Origins
 
 > *@erlend-sh said:*
@@ -51,9 +56,9 @@ https://blog.jim-nielsen.com/2022/other-peoples-websites/
 
 #### Prior art
 
+- https://github.com/commune-org/linksapp-fresh (our own prototype in Fresh/Deno)
 - https://github.com/Neutron-Creative/Singlelink
 - https://github.com/sethcottle/littlelink
   - https://github.com/JulianPrieber/littlelink-custom
   - https://littlelink-custom.com/blog/ai-generated-theme/
 - https://codeberg.org/keyoxide/
-- https://github.com/arthur-ver/deno-fresh-mongo
