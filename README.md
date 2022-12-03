@@ -29,6 +29,8 @@ https://blog.jim-nielsen.com/2022/other-peoples-websites/
 - [Network of shared purpose](https://github.com/commune-org/weird/issues/9)
 - [Progressively advanced CMS](https://github.com/commune-org/weird/issues/5)
 - [Web identity aggregator](https://github.com/commune-org/weird/issues/1)
+- [Grand plan — CommunityOS](https://github.com/commune-org/weird/issues/11)
+- [Business plan](https://github.com/commune-org/weird/issues/12)
 
 ### Origins
 
