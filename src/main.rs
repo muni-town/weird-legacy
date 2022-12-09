@@ -5,6 +5,8 @@ use std::{
 };
 use sycamore::prelude::*;
 
+mod services;
+
 #[derive(Prop, Deserialize, Debug, Clone)]
 struct UserData {
     github_username: String,
@@ -15,19 +17,17 @@ struct UserData {
 #[component]
 fn App<G: Html>(cx: Scope, user_data: UserData) -> View<G> {
     let links = create_signal(cx, user_data.links);
+    let github_data = services::UserGithubInfo::new(user_data.github_username.clone());
     view! {
         cx,
-        h1 { (user_data.github_username) }
-        h3 { (user_data.full_name) }
-        ul {
+        img(class="avatar", src=github_data.avatar_url)
+        h1(class="full-name") { (user_data.full_name) }
+        h3(class="user-name") { (user_data.github_username) }
+        p(class="bio") { (github_data.bio) }
+        div(class="links-container") {
             Indexed(iterable=links, view = |cx, x|{
                 let x = create_ref(cx, x);
-                view!{
-                    cx,
-                    li{
-                        a(href=x.clone()){( x.clone() )}
-                    }
-                }
+                view!{ cx, a(href=x.clone(), class="link"){( x.clone() )} }
             })
         }
     }
@@ -43,6 +43,7 @@ fn main() {
     let user_data: UserData = serde_json::from_str(&user_data_json).unwrap();
 
     // Feed data to Sycamore
+    println!("Processing...");
     let cloned_user_data = user_data.clone();
     let html = sycamore::render_to_string(|cx| view! {cx, App(cloned_user_data)});
 
@@ -64,7 +65,7 @@ fn main() {
     .unwrap();
 
     println!(
-        "Page: {}_data.html has been generated.",
+        "Page \"{}_data.html\" has been generated.",
         user_data.github_username
     );
 }
