@@ -33,7 +33,7 @@ impl UserGithubInfo {
             .to_string()
             .replace("\"", "");
         println!("Scraping README.md from GitHub...");
-        let read_me = client
+        let mut read_me = client
             .get(format!(
                 "https://raw.githubusercontent.com/{}/{}/main/README.md",
                 username, username
@@ -42,6 +42,8 @@ impl UserGithubInfo {
             .expect("no readme file. is your readme file public?")
             .text()
             .unwrap();
+        read_me.remove(read_me.len() - 1);
+        read_me.remove(0);
         Self {
             avatar_url,
             bio,

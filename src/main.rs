@@ -1,3 +1,5 @@
+use mdsycx::parse;
+use mdsycx::MDSycX;
 use serde::Deserialize;
 use std::{
     fs,
@@ -18,12 +20,17 @@ struct UserData {
 fn App<G: Html>(cx: Scope, user_data: UserData) -> View<G> {
     let links = create_signal(cx, user_data.links);
     let github_data = services::UserGithubInfo::new(user_data.github_username.clone());
+    let read_me = create_ref(cx, github_data.read_me);
+    let parsed_readme = parse::<()>(&read_me).unwrap();
     view! {
         cx,
         img(class="avatar", src=github_data.avatar_url)
         h1(class="full-name") { (user_data.full_name) }
         h3(class="user-name") { (user_data.github_username) }
         p(class="bio") { (github_data.bio) }
+        section(class="readme"){
+            MDSycX(body=parsed_readme.body)
+        }
         div(class="links-container") {
             Indexed(iterable=links, view = |cx, x|{
                 let x = create_ref(cx, x);
