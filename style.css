@@ -1,0 +1,69 @@
+* {
+    box-sizing: border-box;    
+}
+
+:root {
+    --bg: #121212;
+    --dark-gray:  #8a8a8a;
+    --fg: #ffffff;
+}
+
+html, body{
+    margin: 0;
+    padding: 0;
+}
+
+html{
+    background-color: var(--bg);
+    color: var(--fg);
+}
+
+body {
+    max-width: 50ch;
+    margin-inline: auto;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.avatar {
+    margin-top: 2em;
+    width: 10em;
+    height: auto;
+    border-radius: 50%;
+}
+
+.user-name, .full-name {
+    font-weight: normal;
+    margin: 0;
+}
+
+.full-name {
+    margin-top:1em ;
+    color: var(--fg);
+}
+
+.user-name {
+    color: var(--dark-gray);
+}
+
+.bio {
+    color: var(--dark-gray);
+}
+
+.links-container {
+    display: grid;
+    grid-gap: 0ch;
+}
+
+.link {
+    text-decoration: none;
+    color: var(--fg);
+}
+
+.link::before {
+    content: '⯻ ';
+    font-weight: bold;
+    
+}
+

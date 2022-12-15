@@ -20,8 +20,8 @@ struct UserData {
 fn App<G: Html>(cx: Scope, user_data: UserData) -> View<G> {
     let links = create_signal(cx, user_data.links);
     let github_data = services::UserGithubInfo::new(user_data.github_username.clone());
-    let readme = create_ref(cx, github_data.readme);
-    let parsed_readme = parse::<()>(&readme).unwrap();
+    let read_me = create_ref(cx, github_data.read_me);
+    let parsed_readme = parse::<()>(&read_me).unwrap();
     view! {
         cx,
         img(class="avatar", src=github_data.avatar_url)
@@ -55,25 +55,24 @@ fn main() {
     let html = sycamore::render_to_string(|cx| view! {cx, App(cloned_user_data)});
 
     // Open the index file
-    let mut html_file = fs::File::open("src/templates/default/index.html").unwrap();
+    let mut html_file = fs::File::open("index.html").unwrap();
     let mut index_template = String::new();
     html_file.read_to_string(&mut index_template).unwrap();
 
     // Create a new page from the template
     let mut generated_page =
-        fs::File::create(format!("dist/{}_data.html", user_data.github_username)).unwrap();
-    fs::copy("src/templates/default/styles.css", "dist/styles.css").expect("couldn't copy styles for some reason");
+        fs::File::create(format!("{}_data.html", user_data.github_username)).unwrap();
     write!(
         generated_page,
         "{}",
         index_template
-            .replace("%sycamore-content%", &html)
+            .replace("%sycamore-body%", &html)
             .replace("%sycamore-title%", &user_data.full_name)
     )
     .unwrap();
 
     println!(
-        "Page \"dist/{}_data.html\" has been generated.",
-             user_data.github_username
+        "Page \"{}_data.html\" has been generated.",
+        user_data.github_username
     );
 }
