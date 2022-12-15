@@ -4,7 +4,7 @@ use std::collections::HashMap;
 pub struct UserGithubInfo {
     pub avatar_url: String,
     pub bio: String,
-    pub read_me: String,
+    pub readme: String,
 }
 
 impl UserGithubInfo {
@@ -33,7 +33,7 @@ impl UserGithubInfo {
             .to_string()
             .replace("\"", "");
         println!("Scraping README.md from GitHub...");
-        let mut read_me = client
+        let mut readme = client
             .get(format!(
                 "https://raw.githubusercontent.com/{}/{}/main/README.md",
                 username, username
@@ -42,12 +42,12 @@ impl UserGithubInfo {
             .expect("no readme file. is your readme file public?")
             .text()
             .unwrap();
-        read_me.remove(read_me.len() - 1);
-        read_me.remove(0);
+        readme.remove(readme.len() - 1);
+        readme.remove(0);
         Self {
             avatar_url,
             bio,
-            read_me,
+            readme,
         }
     }
 }
