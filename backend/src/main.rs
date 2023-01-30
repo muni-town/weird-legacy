@@ -1,11 +1,12 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{StatusCode, HeaderValue, Method},
     response::IntoResponse,
     routing::get,
     Router,
 };
 use sqlx::postgres::{PgPool, PgPoolOptions};
+use tower_http::cors::CorsLayer;
 use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
@@ -37,6 +38,9 @@ async fn main() {
 
     let app = Router::new()
         .route("/:github_username", get(get_page))
+        .layer(CorsLayer::new()
+               .allow_origin("http://localhost:8080".parse::<HeaderValue>().unwrap())
+               .allow_methods([Method::GET]))
         .with_state(pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -56,10 +60,7 @@ async fn get_page(
         .fetch_all(&pool)
         .await
         .map_err(internal_error);
-    (
-        StatusCode::OK,
-        serde_json::to_string(&page.unwrap()).unwrap(),
-    )
+    (StatusCode::OK, axum::Json(page.unwrap()))
 }
 
 fn internal_error<E>(err: E) -> (StatusCode, String)
