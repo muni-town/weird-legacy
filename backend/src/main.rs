@@ -1,11 +1,15 @@
-use axum::{extract::State, http::StatusCode, routing::get, Router};
-use sqlx::{
-    postgres::{PgPool, PgPoolOptions},
-    Row,
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    response::IntoResponse,
+    routing::get,
+    Router,
 };
+use sqlx::postgres::{PgPool, PgPoolOptions};
+use std::net::SocketAddr;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
-use std::net::SocketAddr;
+use common::Link;
 
 #[tokio::main]
 async fn main() {
@@ -18,11 +22,12 @@ async fn main() {
         .with(tracing_subscriber::fmt::layer())
         .init();
 
-    let postgres_user = std::env::var("POSTGRES_USER").unwrap_or("postgres".to_string());
-    let postgres_pass = std::env::var("POSTGRES_PASSWORD").unwrap_or("pass".to_string());
-    let postgres_db = std::env::var("POSTGRES_DB").unwrap_or("db".to_string());
-    let db_connection_str =
-        format!("postgres://{postgres_user}:{postgres_pass}@localhost:5432/{postgres_db}");
+    let db_connection_str = format!(
+        "postgres://{}:{}@localhost:5432/{}",
+        std::env::var("POSTGRES_USER").unwrap_or_else(|_| "postgres".to_string()),
+        std::env::var("POSTGRES_PASSWORD").unwrap_or_else(|_| "pass".to_string()),
+        std::env::var("POSTGRES_DB").unwrap_or_else(|_| "db".to_string())
+    );
 
     let pool = PgPoolOptions::new()
         .max_connections(5)
@@ -31,7 +36,7 @@ async fn main() {
         .expect("can't connect to database");
 
     let app = Router::new()
-        .route("/", get(using_connection_pool_extractor))
+        .route("/:github_username", get(get_page))
         .with_state(pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -42,26 +47,19 @@ async fn main() {
         .unwrap();
 }
 
-async fn using_connection_pool_extractor(
+async fn get_page(
+    Path(github_username): Path<String>,
     State(pool): State<PgPool>,
-) -> Result<String, (StatusCode, String)> {
-    let rows = sqlx::query("select * from page")
+) -> impl IntoResponse {
+    let page = sqlx::query_as::<_, Link>("select * from links where github_username = $1")
+        .bind(github_username)
         .fetch_all(&pool)
         .await
         .map_err(internal_error);
-    let rows = rows.unwrap();
-    let str_result = rows
-        .iter()
-        .map(|r| {
-            format!(
-                "{} - {}",
-                r.get::<String, _>("github_username"),
-                r.get::<String, _>("display_name")
-            )
-        })
-        .collect::<Vec<String>>()
-        .join(", ");
-    Ok(str_result)
+    (
+        StatusCode::OK,
+        serde_json::to_string(&page.unwrap()).unwrap(),
+    )
 }
 
 fn internal_error<E>(err: E) -> (StatusCode, String)

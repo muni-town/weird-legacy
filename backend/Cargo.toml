@@ -12,3 +12,6 @@ sqlx = { version = "0.6.2", features = ["postgres", "runtime-tokio-rustls"] }
 tokio = { version = "1.25.0", features = ["full"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
+common = {path = "../common"}
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.91"
