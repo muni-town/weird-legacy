@@ -1,8 +1,8 @@
 use common::Link;
 use reqwasm::http::Request;
-use serde::{Serialize, Deserialize};
-use sycamore::{prelude::*, futures::spawn_local_scoped};
-
+use serde::{Deserialize, Serialize};
+use sycamore::{futures::spawn_local_scoped, prelude::*};
+use sycamore_router::navigate;
 
 #[derive(Clone, PartialEq, Serialize, Deserialize)]
 struct LinkData {
@@ -13,7 +13,7 @@ struct LinkData {
 }
 impl LinkData {
     fn to_link(&self, github_username: String) -> Link {
-        Link{
+        Link {
             title: (*self.title.get()).clone(),
             url: (*self.url.get()).clone(),
             github_username,
@@ -41,23 +41,28 @@ pub fn CreatePage<G: Html>(cx: Scope) -> View<G> {
         })
     };
     let create_page = move |_| {
-        let data = use_context::<LinkDataRX>(cx);
-        spawn_local_scoped(cx, async {
+        spawn_local_scoped(cx, async move {
+            let data = use_context::<LinkDataRX>(cx);
             let filtered_data = data
                 .get()
                 .as_ref()
                 .iter()
                 .filter(|x| !x.title.get().is_empty())
                 .filter(|x| !x.url.get().is_empty())
-                .map(|x| x.to_link(github_username.get().clone().to_string())).collect::<Vec<Link>>();
-            Request::post("http://127.0.0.1:3000/create")
+                .map(|x| x.to_link((*github_username.get()).clone()))
+                .collect::<Vec<Link>>();
+            match Request::post("http://127.0.0.1:3000/create")
                 .header("Content-Type", "application/json")
                 .body(serde_json::to_string(&filtered_data).unwrap())
                 .send()
                 .await
-                .unwrap();
+            {
+                Ok(_) => {navigate(&format!( "/link/{github_username}" ))}
+                _ => { navigate(&format!( "/link/{github_username}" ))}
+            }
         });
     };
+
     let data = use_context::<LinkDataRX>(cx);
     view! {
         cx,
