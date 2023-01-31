@@ -1,13 +1,13 @@
 use axum::{
     extract::{Path, State},
-    http::{StatusCode, HeaderValue, Method},
+    http::StatusCode,
     response::IntoResponse,
-    routing::get,
-    Router,
+    routing::{get, post},
+    Json, Router,
 };
 use sqlx::postgres::{PgPool, PgPoolOptions};
-use tower_http::cors::CorsLayer;
 use std::net::SocketAddr;
+use tower_http::cors::{CorsLayer, Any};
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
 
 use common::Link;
@@ -38,9 +38,8 @@ async fn main() {
 
     let app = Router::new()
         .route("/:github_username", get(get_page))
-        .layer(CorsLayer::new()
-               .allow_origin("http://localhost:8080".parse::<HeaderValue>().unwrap())
-               .allow_methods([Method::GET]))
+        .route("/create", post(create_page))
+        .layer(CorsLayer::new().allow_origin(Any))
         .with_state(pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
@@ -61,6 +60,25 @@ async fn get_page(
         .await
         .map_err(internal_error);
     (StatusCode::OK, axum::Json(page.unwrap()))
+}
+
+#[axum_macros::debug_handler]
+async fn create_page(
+    State(pool): State<PgPool>,
+    Json(links): Json<Vec<Link>>,
+) -> impl IntoResponse {
+    for link in links.iter() {
+        _ = sqlx::query_as::<_, Link>(
+            "insert into links (url, title, github_username)  values ($1, $2, $3)",
+        )
+        .bind(&link.url)
+        .bind(&link.title)
+        .bind(&link.github_username)
+        .fetch_one(&pool)
+        .await
+        .map_err(internal_error);
+    }
+    ( StatusCode::CREATED, format!("Created page for {}", links[0].github_username))
 }
 
 fn internal_error<E>(err: E) -> (StatusCode, String)

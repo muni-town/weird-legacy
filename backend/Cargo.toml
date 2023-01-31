@@ -14,3 +14,4 @@ tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
 common = {path = "../common"}
 tower-http = { version = "0.3.5", features = ["cors"] }
+axum-macros = "0.3.2"
