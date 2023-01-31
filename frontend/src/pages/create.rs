@@ -57,8 +57,8 @@ pub fn CreatePage<G: Html>(cx: Scope) -> View<G> {
                 .send()
                 .await
             {
-                Ok(_) => {navigate(&format!( "/link/{github_username}" ))}
-                _ => { navigate(&format!( "/link/{github_username}" ))}
+                Ok(_) => navigate(&format!("/link/{github_username}")),
+                _ => navigate(&format!("/link/{github_username}")),
             }
         });
     };
@@ -67,25 +67,27 @@ pub fn CreatePage<G: Html>(cx: Scope) -> View<G> {
     view! {
         cx,
         h2 { "Create a page" }
-        input(placeholder="github username ...", bind:value = github_username)
-        button(on:click=add) { "new" }
         div(class="data-container") {
-            Keyed(iterable = &data, view = |cx, x| {
-                let item = create_ref(cx, x);
-                let delete = move |_| {
-                    let data = use_context::<LinkDataRX>(cx);
-                    data.modify().retain(|y| y.id != item.id)
-                };
-                view!{ cx,
-                    span{
-                        input(placeholder="title...", bind:value=item.title)
-                        input(placeholder="url...", bind:value=item.url)
-                        button(on:click = delete) {"remove"}
-                    }
+                span{
+                    input(placeholder="github username ...", bind:value = github_username)
+                        button(on:click=add) { "+" }
                 }
-            },
-            key = |x| x.id)
+                Keyed(iterable = &data, view = |cx, x| {
+                    let item = create_ref(cx, x);
+                    let delete = move |_| {
+                        let data = use_context::<LinkDataRX>(cx);
+                        data.modify().retain(|y| y.id != item.id)
+                    };
+                    view!{ cx,
+                        span{
+                            input(class = "input-create-form", placeholder="title...", bind:value=item.title)
+                            input(class = "input-create-form", placeholder="url...", bind:value=item.url)
+                            button(on:click = delete) {"remove"}
+                        }
+                    }
+                },
+                key = |x| x.id)
+            span { button(on:click=create_page, class = "btn-create"){"Create"} }
         }
-        button(on:click=create_page){"Create"}
     }
 }
