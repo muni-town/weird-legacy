@@ -1,9 +1,9 @@
 * {
-    font-family : Arial, Sans-serif;
     box-sizing: border-box;
 } 
 
 :root {
+    font-family : Arial, Sans-serif;
     background: #2a2a2a;
     color: #ffffff;
 }

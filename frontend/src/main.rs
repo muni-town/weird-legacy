@@ -1,5 +1,5 @@
 use reqwasm::http::Request;
-use sycamore::{prelude::*, view, suspense::Suspense};
+use sycamore::{prelude::*, suspense::Suspense, view};
 use sycamore_router::{HistoryIntegration, Route, Router};
 
 use common::Link;
@@ -50,7 +50,7 @@ fn main() {
 
 #[component(inline_props)]
 fn LinkPage<G: Html>(cx: Scope<'_>, github_username: String) -> View<G> {
-    view!{
+    view! {
         cx,
         Suspense(fallback = view!{cx, "loading... "}) {
             LinkPageChild(github_username = github_username)
@@ -59,19 +59,36 @@ fn LinkPage<G: Html>(cx: Scope<'_>, github_username: String) -> View<G> {
 }
 
 #[component(inline_props)]
-async fn LinkPageChild<G: Html> (cx: Scope<'_>, github_username: String) -> View <G> {
+async fn LinkPageChild<G: Html>(cx: Scope<'_>, github_username: String) -> View<G> {
     match Request::get(&format!("http://127.0.0.1:3000/{github_username}"))
-            .send()
-            .await
+        .send()
+        .await
     {
         Ok(data) => {
-            match data.json::<Vec<Link>>().await {
-                Ok(text) => view!{ cx, samp { (format!("{:?}",text)) } } ,
-                Err(e) => view!{ cx, samp { (e) } }
+            if data.status() == 200 {
+                match data.json::<Vec<Link>>().await {
+                    Ok(d) => view! {cx, PageData(data=d)},
+                    Err(e) => view! { cx, samp { (e) } },
+                }
+            } else {
+                view! { cx, samp { "Error: failed to get user" } }
             }
-        },
-        Err(r) => view!{ cx, samp { (r) } }
-
+        }
+        Err(_) => view! { cx, samp { "Error: failed to get page" } },
     }
-     
+}
+
+#[component(inline_props)]
+fn PageData<G: Html>(cx: Scope, data: Vec<Link>) -> View<G> {
+    let github_username = data[0].github_username.clone();
+    let links = create_signal(cx, data);
+    view!{ 
+        cx,
+        h2 { (github_username) }
+        ul{ 
+            Indexed(iterable=links, view = |cx, x| view!{cx,
+                li { ( x.title ) " -> " (x.url) }
+            })
+        }
+    }
 }
