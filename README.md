@@ -21,14 +21,14 @@ docker build -t weird . && docker run --rm -p 5432:5432 weird
 
 ### Backend
 Create a `.env` file at the root of the repository and add the `ENV` variables from the Dockerfile. 
-Then simply start the server
+Then start the server.
 ```bash
-cargo r --bin backend
+cargo run --bin backend
 ```
 ### Frontend
-Then
+Serve the frontend.
 ```bash
 cd frontend && trunk serve
 ```
 
-Then simply visit `localhost:8080` in your browser
+Finally, visit `localhost:8080` in your browser
