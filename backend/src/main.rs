@@ -1,6 +1,6 @@
 use axum::{
     extract::{Path, State},
-    http::StatusCode,
+    http::{StatusCode, Method},
     response::IntoResponse,
     routing::{get, post},
     Json, Router,
@@ -39,7 +39,7 @@ async fn main() {
     let app = Router::new()
         .route("/:github_username", get(get_page))
         .route("/create", post(create_page))
-        .layer(CorsLayer::new().allow_origin(Any))
+    .layer(CorsLayer::new().allow_origin(Any).allow_methods([Method::GET, Method::POST]).allow_headers(Any))
         .with_state(pool);
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
