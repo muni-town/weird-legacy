@@ -6,18 +6,14 @@
 :root {
     background: #febcbc;
     color: #555;
-
-    /*POLkA DOT BACKGROUND*/
-  /* background-image: radial-gradient(#ebe5f3 20%, transparent 20%), radial-gradient(#FAFAFA 20%, transparent 20%); */
-  /* background-color: #fe83a5; */
-  /* background-position: 0 0, 20px 20px; */
-  /* background-size: 40px 40px; */
+background: radial-gradient(circle, transparent 20%, #e6e6ff 20%, #e6e6ff 80%, transparent 80%, transparent) 0% 0% / 32px 32px, radial-gradient(circle, transparent 20%, #e6e6ff 20%, #e6e6ff 80%, transparent 80%, transparent) 16px 16px / 32px 32px, linear-gradient(#4b5aff 2px, transparent 2px) 0px -1px / 16px 16px, linear-gradient(90deg, #4b5aff 2px, #e6e6ff 2px) -1px 0px / 16px 16px #e6e6ff;
+background-size: 32px 32px, 32px 32px, 16px 16px, 16px 16px;
+background-color: #e6e6ff;
 }
 
 body {
     max-width: 70ch;
-    margin: auto;
-    margin-top: 2em;
+    margin: 2em auto;
     line-height: 1.5;
 }
 
@@ -67,13 +63,6 @@ input:focus, button:focus {
     background: #f38;
 }
 
-.img-avatar {
-    width: clamp(20ch, 50%, 40ch);
-    padding: 1ch;
-    border: 2px dashed #ffb3e3;
-    margin-bottom: 1em;
-}
-
 
 .container {
     width: 100%;
@@ -81,12 +70,22 @@ input:focus, button:focus {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
     padding: 2em;
 
     background: #fff;
 
     border: 3px solid #0e3bff;
+    border-radius: 1ch;
     box-shadow: 10px 10px #0e3bff;
+}
+
+.img-avatar {
+    width: clamp(20ch, 50%, 40ch);
+    padding: 1ch;
+    border: 3px dashed #0e3bff;
+    border-radius: 50%;
+    margin-bottom: 1em;
 }
 
 .linkpage-name, .linkpage-username{
@@ -103,14 +102,17 @@ input:focus, button:focus {
     margin-top: 1em;
     display: flex;
     flex-direction: column;
-    gap: 1ch;
+    gap: 2ch;
     border: 1px solid #ccc;
+    border-radius: 2ch;
+    width: 100%;
     padding: 2ch;
 }
 
 .link {
     background: #efebec;
     padding: 1ch 2ch;
+    border-radius: 1ch;
 }
 
 .link-title:before {

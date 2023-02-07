@@ -80,8 +80,8 @@ pub fn CreatePage<G: Html>(cx: Scope) -> View<G> {
                     };
                     view!{ cx,
                         span{
-                            input(class = "input-create-form", placeholder="title...", bind:value=item.title)
-                            input(class = "input-create-form", placeholder="url...", bind:value=item.url)
+                            input(placeholder="title...", bind:value=item.title)
+                            input(placeholder="url...", bind:value=item.url)
                             button(on:click = delete, class="btn-remove") {"remove"}
                         }
                     }
