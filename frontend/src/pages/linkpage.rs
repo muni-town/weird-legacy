@@ -63,14 +63,21 @@ async fn PageDataChild<G: Html>(cx: Scope<'_>, data: Vec<Link>) -> View<G> {
     let name = gh_profile.name.unwrap_or("failed to get name".into()).clone();
     view! {
         cx,
-        div(class="linkpage"){ 
+        div(class="container"){ 
             img(src=avatar, class="img-avatar") {}
-            h2 { (name) }
-            h3 { (github_username) }
-            div{
-                Indexed(iterable=links, view = |cx, item| view!{cx,
-                    div(style="text-align: center"){ 
-                        a(href=item.url, rel="external"){( item.title )}
+            h2(class="linkpage-name") { (name) }
+            h3(class="linkpage-username") { (github_username) }
+            fieldset(class="links-container") {
+                legend{"Links"}
+                Indexed(iterable=links, view = |cx, item| {
+                    let title = item.title;
+                    let url = create_signal(cx, item.url );
+                    view!{
+                        cx,
+                        div(class="link"){ 
+                            div(class="link-title"){(title)}
+                            a(href=url.get(), rel="external", class="link-url"){(url.get())}
+                        }
                     }
                 })
             }

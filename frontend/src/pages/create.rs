@@ -66,13 +66,13 @@ pub fn CreatePage<G: Html>(cx: Scope) -> View<G> {
     let data = use_context::<LinkDataRX>(cx);
     view! {
         cx,
-        h2 { "Create a page" }
-        div(class="data-container") {
-                span{
-                    input(placeholder="github username ...", bind:value = github_username)
-                        button(on:click=add) { "+" }
-                }
-                Keyed(iterable = &data, view = |cx, x| {
+        div(class="container") {
+            h2 { "Create a page" }
+            span{
+                input(placeholder="github username ...", bind:value = github_username)
+                    button(on:click=add) { "+" }
+            }
+            Keyed(iterable = &data, view = |cx, x| {
                     let item = create_ref(cx, x);
                     let delete = move |_| {
                         let data = use_context::<LinkDataRX>(cx);
@@ -82,11 +82,11 @@ pub fn CreatePage<G: Html>(cx: Scope) -> View<G> {
                         span{
                             input(class = "input-create-form", placeholder="title...", bind:value=item.title)
                             input(class = "input-create-form", placeholder="url...", bind:value=item.url)
-                            button(on:click = delete) {"remove"}
+                            button(on:click = delete, class="btn-remove") {"remove"}
                         }
                     }
                 },
-                key = |x| x.id)
+            key = |x| x.id)
             span { button(on:click=create_page, class = "btn-create"){"Create"} }
         }
     }
