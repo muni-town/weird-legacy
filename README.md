@@ -1,5 +1,7 @@
 # Sycamore Spa Version
 
+![sample-linkpage](https://user-images.githubusercontent.com/583842/217551090-19bdf42a-8f5f-44be-a343-ef9b9891a759.png)
+
 ## Usage
 
 ### Requirements
