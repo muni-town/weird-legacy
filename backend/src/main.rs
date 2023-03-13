@@ -83,7 +83,7 @@ async fn get_page(
     (StatusCode::OK, axum::Json(page.unwrap()))
 }
 
-#[axum_macros::debug_handler]
+#[axum::debug_handler]
 async fn create_page(
     State(pool): State<SqlitePool>,
     Json(links): Json<Vec<Link>>,
