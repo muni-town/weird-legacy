@@ -6,12 +6,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-axum = {version ="0.6.4", features = ["json"]}
+axum = { version ="0.6.4", features = ["json"] }
 dotenv = "0.15.0"
 sqlx = { version = "0.6.2", features = ["sqlite", "runtime-tokio-rustls", "json"] }
 tokio = { version = "1.25.0", features = ["full"] }
 tracing = "0.1.37"
 tracing-subscriber = { version = "0.3.16", features = ["env-filter"] }
-common = {path = "../common"}
+common = { path = "../common" }
 tower-http = { version = "0.3.5", features = ["cors"] }
 axum-macros = "0.3.2"
