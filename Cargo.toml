@@ -4,3 +4,6 @@ members = [
     "frontend",
     "common"
 ]
+exclude = [
+    "desktop"
+]
