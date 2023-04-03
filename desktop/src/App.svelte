@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { invoke } from "@tauri-apps/api/tauri";
 
   type Link = { text: string, url: string }
 
@@ -31,6 +32,10 @@
     setTimeout(() => loading = false, 2000)
   }
 
+  function toggle_preview() {
+    invoke('toggle_preview_window')
+  }
+
 </script>
 
 <main class="text-white">
@@ -56,7 +61,9 @@
   {/if}
 
   <div class="absolute flex flex-row top-auto bottom-0.5 left-auto right-2 ">
-    <button class="bg-gray-600 hover:bg-blue-600 rounded-md p-3 mb-2 mr-4">
+    <button
+      class="bg-gray-600 hover:bg-blue-600 rounded-md p-3 mb-2 mr-4"
+      on:click={toggle_preview}>
       Toggle Preview
     </button>
     {#if loading}

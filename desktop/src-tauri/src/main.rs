@@ -3,8 +3,16 @@
     windows_subsystem = "windows"
 )]
 
+use commands::toggle_preview_window;
 use log::debug;
-use std::{fs, io, path::PathBuf};
+use state::PreviewWindow;
+use std::{
+    fs, io,
+    path::{Path, PathBuf},
+};
+
+mod commands;
+mod state;
 
 fn main() {
     tauri::Builder::default()
@@ -20,15 +28,29 @@ fn main() {
                 .join("template/");
             if !target_dir.exists() {
                 fs::create_dir_all(&target_dir).expect("error creating template directory");
-                extract_template(filepath, target_dir);
+                extract_template(filepath, &target_dir);
             }
+            // create the preview window
+            tauri::WindowBuilder::new(
+                app,
+                "preview",
+                tauri::WindowUrl::External(
+                    format!("file://{}/index.html", target_dir.to_str().unwrap())
+                        .parse()
+                        .unwrap(),
+                ),
+            )
+            .build()?
+            .hide()?;
             Ok(())
         })
+        .manage(PreviewWindow::default())
+        .invoke_handler(tauri::generate_handler![toggle_preview_window])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
 
-fn extract_template(filepath: PathBuf, dest: PathBuf) {
+fn extract_template(filepath: PathBuf, dest: &Path) {
     let file = fs::File::open(filepath).unwrap();
 
     let mut archive = zip::ZipArchive::new(file).unwrap();
