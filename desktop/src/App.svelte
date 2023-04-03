@@ -27,8 +27,9 @@
     //  TODO: load saved urls.
   });
 
-  function generate(e: MouseEvent & { currentTarget: EventTarget & HTMLButtonElement }) {
+  function generate() {
     loading = true;
+    invoke('generate_site', { links })
     setTimeout(() => loading = false, 2000)
   }
 
