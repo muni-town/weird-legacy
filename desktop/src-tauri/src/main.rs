@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use commands::toggle_preview_window;
+use commands::{toggle_preview_window, generate_site};
 use log::debug;
 use state::PreviewWindow;
 use std::{
@@ -45,7 +45,10 @@ fn main() {
             Ok(())
         })
         .manage(PreviewWindow::default())
-        .invoke_handler(tauri::generate_handler![toggle_preview_window])
+        .invoke_handler(tauri::generate_handler![
+            toggle_preview_window,
+            generate_site
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

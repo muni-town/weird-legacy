@@ -13,7 +13,7 @@ fn main() {
     tauri_build::build()
 }
 
-fn generate_zip() -> i32 {
+fn generate_zip() {
     let path = Path::new(file!()).parent().unwrap();
     let src_dir = path.join("../template/build").to_str().unwrap().to_owned();
     let dst_file = path
@@ -21,12 +21,9 @@ fn generate_zip() -> i32 {
         .to_str()
         .unwrap()
         .to_owned();
-    match doit(&src_dir, &dst_file, zip::CompressionMethod::Deflated) {
-        Err(e) => println!("cargo:warning=Could not create template.zip: {e}"),
-        _ => ()
+    if let Err(e) = doit(&src_dir, &dst_file, zip::CompressionMethod::Deflated) {
+        println!("cargo:warning=Could not create template.zip: {e}")
     }
-
-    0
 }
 
 fn zip_dir<T>(
