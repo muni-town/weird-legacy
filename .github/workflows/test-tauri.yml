@@ -1,0 +1,45 @@
+name: 'test'
+on: 
+  pull_request:
+  push:
+    branches:
+      - main
+    paths:
+      - 'desktop/**'
+
+defaults:
+  run:
+    working-directory: desktop
+
+jobs:
+  test-tauri:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [macos-latest, ubuntu-20.04, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 6.0.2
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+      - name: install dependencies (ubuntu only)
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: install frontend dependencies and build
+        run: |
+          pnpm install
+          pnpm -C template install && pnpm -C template run build
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
