@@ -10,17 +10,17 @@
   let preview = false;
   let loading = false;
 
-  function addLink(e: Event & { readonly submitter: HTMLElement } & { currentTarget: EventTarget & HTMLFormElement }) {
-    e.preventDefault()
-    links = [...links, { text, url }];
-    url = "";
-    text = "";
+  function addLink() {
+    links = [...links, { text, url }]
+    invoke('add_link', { url, text }).catch((e) => {
+      console.error(e)
+    })
+    url = ''
+    text = ''
   }
 
-  function removeLink(text: string) {
-    return () => {
-      links = links.filter((t) => t.text != text);
-    };
+  function removeLink(url: string, text: string) {
+    invoke('remove_link', { url, text }).catch((e) => console.error(e))
   }
 
   onMount(() => {
@@ -30,7 +30,14 @@
   function generate() {
     loading = true;
     invoke('generate_site', { links })
-    setTimeout(() => loading = false, 2000)
+      .then((v) => {
+        console.log('Site generated')
+        // TODO: prompt for deploy options.
+      })
+      .catch((e) => {
+        console.error(e)
+      })
+      .finally(() => (loading = false))
   }
 
   function toggle_preview() {
@@ -42,9 +49,23 @@
 <main class="text-white">
   <div class="mb-8" />
 
-  <form on:submit={addLink} action="/" class="flex flex-col justify-start items-center gap-4 text-white">
-    <input type="text" bind:value={text} class="text-black rounded p-2" placeholder="Enter text.."/>
-    <input type="url" bind:value={url} class="text-black rounded p-2" placeholder="Enter url.."/>
+  <form
+    on:submit|preventDefault={addLink}
+    action="/"
+    class="flex flex-col justify-start items-center gap-4 text-white"
+  >
+    <input
+      type="text"
+      bind:value={text}
+      class="text-black rounded p-2"
+      placeholder="Enter text.."
+    />
+    <input
+      type="url"
+      bind:value={url}
+      class="text-black rounded p-2"
+      placeholder="Enter url.."
+    />
     <button class="bg-blue-600 rounded p-2 mb-2" type="submit">
       add url
     </button>
