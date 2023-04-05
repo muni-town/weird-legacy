@@ -1,25 +1,30 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
+
   type Link = { text: string, url: string }
 
-  export let name = "Noah Too";
-  export let photo = "https://avatars.githubusercontent.com/u/41364823?v=4";
-  export let links: Array<Link> = [
-    {
-      text: 'Github',
-      url: 'https://github.com/krivahtoo'
-    },
-    {
-      text: 'Twitter',
-      url: 'https://twitter.com/krivah_too'
+  let name = "";
+  let username = ""
+  let photo = 'https://unavatar.io/user';
+  let links: Array<Link> = [];
+
+  onMount(async () => {
+    let res = await fetch('/content.json')
+    if (res.ok) {
+      let data = await res.json()
+      name = data.name
+      links = data.links
+      username = data.username
+      photo = `https://unavatar.io/${username}`
     }
-  ];
+  })
 </script>
 
 <div class="bg-gray-200 font-sans h-screen w-full flex flex-row justify-center items-center">
-  <div class="card w-1/3 mx-auto bg-white m-5 shadow-lg hover:shadow rounded-md">
+  <div class="card w-full sm:w-2/3 lg:w-1/3 mx-auto bg-white md:m-5 shadow-md hover:shadow rounded-md">
      <img class="w-32 mx-auto rounded-full mt-5 border-8 border-white" src={photo} alt="">
      <div class="text-center mt-2 text-3xl font-medium">{ name }</div>
-     <div class="text-center mt-2 font-light text-sm">@krivahtoo</div>
+     <div class="text-center mt-2 font-light text-sm">@{ username }</div>
      <div class="text-center font-normal text-lg">Software Engineer</div>
      <div class="px-6 text-center mt-2 font-light text-sm">
        <p>
