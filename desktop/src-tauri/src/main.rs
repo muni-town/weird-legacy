@@ -3,15 +3,17 @@
     windows_subsystem = "windows"
 )]
 
-use commands::{toggle_preview_window, generate_site};
+use commands::{add_link, export_zip, generate_site, remove_link, toggle_preview_window};
 use log::debug;
-use state::PreviewWindow;
+use state::AppState;
 use std::{
     fs, io,
     path::{Path, PathBuf},
 };
 
 mod commands;
+mod error;
+mod prelude;
 mod state;
 
 fn main() {
@@ -44,10 +46,13 @@ fn main() {
             .hide()?;
             Ok(())
         })
-        .manage(PreviewWindow::default())
+        .manage(AppState::default())
         .invoke_handler(tauri::generate_handler![
             toggle_preview_window,
-            generate_site
+            generate_site,
+            export_zip,
+            remove_link,
+            add_link
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

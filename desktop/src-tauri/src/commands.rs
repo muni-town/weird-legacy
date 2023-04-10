@@ -1,80 +1,104 @@
 use std::fs::File;
 
-use serde::{Deserialize, Serialize};
 use serde_json::to_writer;
 use tauri::{
     api::{dialog::FileDialogBuilder, path::download_dir},
     command, AppHandle, Manager, State,
 };
 
-use crate::state::PreviewWindow;
+use crate::{prelude::*, state::{User, Link}};
+use crate::state::AppState;
 
 #[command]
-pub fn toggle_preview_window(preview: State<'_, PreviewWindow>, handle: AppHandle) -> bool {
-    let mut res = false;
-    if *preview.state.lock().unwrap() {
+pub fn toggle_preview_window(state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
+    if *state.preview.lock().unwrap() {
         if let Some(w) = handle.get_window("preview") {
-            res = w.hide().is_ok();
+            w.hide()?;
         }
-        *preview.state.lock().unwrap() = false;
+        *state.preview.lock().unwrap() = false;
     } else {
         if let Some(w) = handle.get_window("preview") {
-            res = w.show().is_ok();
+            w.show()?;
         }
 
-        *preview.state.lock().unwrap() = true;
+        *state.preview.lock().unwrap() = true;
     }
-    res
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Link {
-    pub text: String,
-    pub url: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct User {
-    pub name: String,
-    pub description: String,
-    pub links: Vec<Link>,
+    Ok(())
 }
 
 #[command]
-pub fn generate_site(links: Vec<Link>, handle: AppHandle) -> Result<(), String> {
+pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
     let template_dir = handle
         .path_resolver()
         .app_local_data_dir()
         .unwrap()
         .join("template/");
-    let content_path = File::create(template_dir.join("content.json"))
-        .map_err(|e| format!("Error creating content.json: {e}"))?;
+    let zip_file = handle
+        .path_resolver()
+        .app_cache_dir()
+        .unwrap()
+        .join("website.zip");
+    let content_path = File::create(template_dir.join("content.json"))?;
 
     let user = User {
         name: "user".to_owned(),
+        username: "user".to_owned(),
         description: "Weird app user".to_owned(),
-        links,
+        links: (*state.data.lock().unwrap().links).to_vec()
     };
 
-    to_writer(content_path, &user).map_err(|e| format!("Error writing to content.json: {e}"))?;
+    to_writer(content_path, &user)?;
 
+    // zip the website bundle.
+    zip_dir(
+        template_dir.to_str().unwrap(),
+        zip_file.to_str().unwrap(),
+        zip::CompressionMethod::Deflated,
+    )?;
+
+    Ok(())
+}
+
+#[command]
+pub fn export_zip(handle: AppHandle) -> Result<()> {
+    let zip_file = handle
+        .path_resolver()
+        .app_cache_dir()
+        .unwrap()
+        .join("website.zip");
     FileDialogBuilder::new()
         .set_file_name("website.zip")
         .set_directory(download_dir().unwrap())
         .save_file(move |f| {
             if let Some(file) = f {
                 println!("Saving website bundle to {}", file.to_str().unwrap());
-                // zip the website bundle.
-                if let Err(e) = zip_dir(
-                    template_dir.to_str().unwrap(),
-                    file.to_str().unwrap(),
-                    zip::CompressionMethod::Deflated,
-                ) {
-                    println!("Error saving zip file to {}: {e}", file.to_str().unwrap());
-                }
+                std::fs::copy(zip_file, file).unwrap();
             }
         });
+    Ok(())
+}
 
+#[command]
+pub fn remove_link(
+    url: String,
+    text: String,
+    state: State<'_, AppState>,
+) -> Result<()> {
+    state.data.lock().unwrap()
+        .links
+        .retain(|v| !(v.url == url && v.text == text));
+    Ok(())
+}
+
+#[command]
+pub fn add_link(
+    url: String,
+    text: String,
+    state: State<'_, AppState>,
+) -> Result<()> {
+    state.data.lock().unwrap()
+        .links
+        .push(Link { text, url });
     Ok(())
 }
 
