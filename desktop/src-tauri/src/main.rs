@@ -3,7 +3,9 @@
     windows_subsystem = "windows"
 )]
 
-use commands::{add_link, export_zip, generate_site, remove_link, toggle_preview_window};
+use commands::{
+    add_link, export_zip, generate_site, remove_link, toggle_preview_window, update_user,
+};
 use log::debug;
 use state::AppState;
 use std::{
@@ -60,7 +62,8 @@ fn main() {
             generate_site,
             export_zip,
             remove_link,
-            add_link
+            add_link,
+            update_user
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
