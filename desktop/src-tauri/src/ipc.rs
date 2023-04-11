@@ -116,7 +116,7 @@ pub fn update_user(
     Ok(())
 }
 
-fn zip_dir(
+pub fn zip_dir(
     src_dir: &str,
     dst_file: &str,
     method: zip::CompressionMethod,

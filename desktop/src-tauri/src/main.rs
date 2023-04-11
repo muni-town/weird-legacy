@@ -3,7 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use commands::{
+use ipc::{
     add_link, export_zip, generate_site, remove_link, toggle_preview_window, update_user,
 };
 use log::debug;
@@ -14,7 +14,7 @@ use std::{
 };
 use tauri::{Manager, WindowEvent};
 
-mod commands;
+mod ipc;
 mod error;
 mod prelude;
 mod state;
