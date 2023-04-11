@@ -18,6 +18,7 @@ mod ipc;
 mod error;
 mod prelude;
 mod state;
+mod utils;
 
 fn main() {
     tauri::Builder::default()
