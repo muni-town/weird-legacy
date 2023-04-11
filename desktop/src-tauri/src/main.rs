@@ -10,6 +10,7 @@ use std::{
     fs, io,
     path::{Path, PathBuf},
 };
+use tauri::{Manager, WindowEvent};
 
 mod commands;
 mod error;
@@ -18,6 +19,13 @@ mod state;
 
 fn main() {
     tauri::Builder::default()
+        .on_window_event(|event| {
+            if let WindowEvent::CloseRequested { .. } = event.event() {
+                if let Some(win) = event.window().get_window("preview") {
+                    win.close().unwrap();
+                }
+            }
+        })
         .setup(move |app| {
             let filepath = app
                 .path_resolver()
