@@ -28,13 +28,15 @@
   })
 
   function export_zip() {
-    invoke('export_zip').catch((e) => console.error(e))
+    invoke('export_zip')
+      .catch((e) => console.error(e))
+      .finally(() => (export_modal = true))
   }
 
   function generate() {
     loading = true
-    invoke('generate_site', { links })
-      .then((v) => {
+    invoke('generate_site')
+      .then(() => {
         console.log('Site generated')
         export_modal = true
       })
