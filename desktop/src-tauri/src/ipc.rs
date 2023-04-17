@@ -44,14 +44,9 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .join("website.zip");
     let content_path = File::create(template_dir.join("content.json"))?;
 
-    let user = User {
-        name: "user".to_owned(),
-        username: "user".to_owned(),
-        description: "Weird app user".to_owned(),
-        links: (*state.data.lock().unwrap().links).to_vec(),
-    };
+    let user: &User = &state.data.lock().unwrap();
 
-    to_writer(content_path, &user)?;
+    to_writer(content_path, user)?;
 
     // zip the website bundle.
     zip_dir(
