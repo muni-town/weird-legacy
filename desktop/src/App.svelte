@@ -7,6 +7,10 @@
   let links: Array<Link> = []
   let url = ''
   let text = ''
+  let name = ''
+  let username = ''
+  let description = ''
+  let user_exists = true
   let loading = false
   let export_modal = false
 
@@ -46,12 +50,78 @@
       .finally(() => (loading = false))
   }
 
+  function addUser() {
+    invoke('update_user', { name, username, description }).then(
+      () => (user_exists = true)
+    )
+  }
+
   function toggle_preview() {
     invoke('toggle_preview_window')
   }
 </script>
 
 <main class="text-white bg-gray-800">
+  <header class="h-10 w-screen align-middle">
+    <button
+      on:click={() => (user_exists = false)}
+      class="ml-auto p-2 text-center text-gray-400 hover:text-white hover:scale-105 active:scale-100"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 my-auto"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+        />
+      </svg>
+    </button>
+  </header>
+
+  {#if !user_exists}
+    <div class="absolute top-0 w-full transition h-full bg-gray-800 z-10">
+      <form
+        on:submit|preventDefault={addUser}
+        action="/"
+        class="flex flex-col justify-start items-center gap-4 mt-8 text-white"
+      >
+        <input
+          required
+          type="text"
+          bind:value={name}
+          class="text-white bg-gray-700 rounded p-2"
+          placeholder="Enter your name.."
+        />
+        <input
+          required
+          type="text"
+          bind:value={username}
+          class="text-white bg-gray-700 rounded p-2"
+          placeholder="Enter you username.."
+        />
+        <textarea
+          cols="20"
+          rows="4"
+          bind:value={description}
+          placeholder="About you.."
+          class="text-white bg-gray-700 rounded p-2"
+        />
+        <button
+          class="bg-blue-600 hover:scale-105 active:scale-100 rounded p-2 mb-2"
+          type="submit"
+        >
+          Save
+        </button>
+      </form>
+    </div>
+  {/if}
+
   {#if export_modal}
     <div class="absolute top-0 w-full transition h-full bg-gray-800 z-20">
       <button
