@@ -110,3 +110,10 @@ pub fn update_user(
     };
     Ok(())
 }
+
+#[command]
+pub fn get_user(state: State<'_, AppState>) -> Result<User> {
+    let user: &User = &state.data.lock().unwrap();
+
+    Ok(user.clone())
+}

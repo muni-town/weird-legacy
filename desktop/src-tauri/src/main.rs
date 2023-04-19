@@ -4,7 +4,7 @@
 )]
 
 use ipc::{
-    add_link, export_zip, generate_site, remove_link, toggle_preview_window, update_user,
+    add_link, export_zip, generate_site, get_user, remove_link, toggle_preview_window, update_user,
 };
 use log::debug;
 use state::AppState;
@@ -14,8 +14,8 @@ use std::{
 };
 use tauri::{Manager, WindowEvent};
 
-mod ipc;
 mod error;
+mod ipc;
 mod prelude;
 mod state;
 mod utils;
@@ -64,7 +64,8 @@ fn main() {
             export_zip,
             remove_link,
             add_link,
-            update_user
+            update_user,
+            get_user
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
