@@ -23,6 +23,10 @@ tauri = { version = "1.2.3", features = ["dialog"] }
 log = "0.4.17"
 walkdir = "2.3.3"
 thiserror = "1.0.40"
+ts-rs = "6.2.0"
+mime_guess = "2.0.4"
+tracing-subscriber = "0.3.17"
+tiny_http = "0.12.0"
 
 [dependencies.zip]
 version = "0.6.4"

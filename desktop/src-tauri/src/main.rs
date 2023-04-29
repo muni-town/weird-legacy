@@ -7,29 +7,37 @@ use ipc::{
     add_link, export_zip, generate_site, get_user, remove_link, toggle_preview_window, update_user,
 };
 use log::debug;
+use server::start_server;
 use state::AppState;
 use std::{
     fs, io,
     path::{Path, PathBuf},
+    sync::mpsc::sync_channel,
 };
 use tauri::{Manager, WindowEvent};
 
 mod error;
 mod ipc;
 mod prelude;
+mod server;
 mod state;
 mod utils;
 
 fn main() {
+    tracing_subscriber::fmt().init();
+
+    let (tx, rx) = sync_channel(1);
     tauri::Builder::default()
-        .on_window_event(|event| {
+        .on_window_event(move |event| {
             if let WindowEvent::CloseRequested { .. } = event.event() {
                 if let Some(win) = event.window().get_window("preview") {
                     win.close().unwrap();
                 }
+                tx.send(1).expect("Failed to send close signal");
             }
         })
         .setup(move |app| {
+            start_server(rx, app);
             let filepath = app
                 .path_resolver()
                 .resolve_resource("assets/template.zip")
@@ -47,11 +55,7 @@ fn main() {
             tauri::WindowBuilder::new(
                 app,
                 "preview",
-                tauri::WindowUrl::External(
-                    format!("file://{}/index.html", target_dir.to_str().unwrap())
-                        .parse()
-                        .unwrap(),
-                ),
+                tauri::WindowUrl::External("http://127.0.0.1:7878".parse().unwrap()),
             )
             .build()?
             .hide()?;
