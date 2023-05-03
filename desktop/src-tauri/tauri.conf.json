@@ -1,19 +1,19 @@
 {
   "package": {
-    "productName": "weird-tauri",
+    "productName": "weird",
     "version": "0.1.0"
   },
   "build": {
     "distDir": "../dist",
     "devPath": "http://localhost:5173",
     "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build"
+    "beforeBuildCommand": "pnpm build && pnpm -C template run build"
   },
   "tauri": {
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "weird-tauri",
+      "identifier": "weird",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -25,7 +25,7 @@
         "assets/template.zip"
       ],
       "externalBin": [],
-      "copyright": "",
+      "copyright": "MIT",
       "category": "DeveloperTool",
       "shortDescription": "Local-first website generator.",
       "longDescription": "",
