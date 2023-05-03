@@ -54,4 +54,3 @@ pub fn zip_dir(
 
     Ok(())
 }
-

@@ -1,14 +1,17 @@
 use std::sync::Mutex;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use ts_rs::TS;
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct Link {
     pub text: String,
     pub url: String,
 }
 
-#[derive(Debug, Default, Clone, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../src/bindings/")]
 pub struct User {
     pub name: String,
     pub username: String,

@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { invoke } from '@tauri-apps/api/tauri'
-
-  type Link = { text: string; url: string }
+  import { User } from './bindings/User'
+  import { Link } from './bindings/Link'
 
   let links: Array<Link> = []
   let url = ''
@@ -28,7 +28,13 @@
   }
 
   onMount(() => {
-    //  TODO: load saved urls.
+    invoke('get_user')
+      .then((u: User) => {
+        name = u.name
+        username = u.username
+        description = u.description
+        links = u.links
+      })
   })
 
   function export_zip() {
