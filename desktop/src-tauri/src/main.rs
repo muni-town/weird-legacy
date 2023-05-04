@@ -37,7 +37,6 @@ fn main() {
             }
         })
         .setup(move |app| {
-            start_server(rx, app);
             let filepath = app
                 .path_resolver()
                 .resolve_resource("assets/template.zip")
@@ -51,6 +50,7 @@ fn main() {
                 fs::create_dir_all(&target_dir).expect("error creating template directory");
                 extract_template(filepath, &target_dir);
             }
+            start_server(rx, app);
             // create the preview window
             tauri::WindowBuilder::new(
                 app,
