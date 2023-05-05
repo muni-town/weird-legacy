@@ -49,7 +49,10 @@
       "active": false
     },
     "allowlist": {
-      "all": false
+      "all": false,
+      "dialog": {
+        "save": true
+      }
     },
     "security": {
       "csp": null

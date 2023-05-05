@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { invoke } from '@tauri-apps/api/tauri'
+  import { save } from '@tauri-apps/api/dialog'
   import { User } from './bindings/User'
   import { Link } from './bindings/Link'
 
@@ -28,19 +29,37 @@
   }
 
   onMount(() => {
-    invoke('get_user')
-      .then((u: User) => {
-        name = u.name
-        username = u.username
-        description = u.description
-        links = u.links
-      })
+    invoke('get_user').then((u: User) => {
+      name = u.name
+      username = u.username
+      description = u.description
+      links = u.links
+    })
   })
 
-  function export_zip() {
-    invoke('export_zip')
-      .catch((e) => console.error(e))
-      .finally(() => (export_modal = true))
+  function publish_to_filesystem() {
+    save({
+      title: 'Export Website',
+      defaultPath: "website.zip",
+      filters: [
+        {
+          name: 'Zip',
+          extensions: ['zip'],
+        },
+      ],
+    }).then((target) => {
+      if (target) {
+        invoke('publish_to_backend', {
+          backendInfo: {
+            filesystem: {
+              target,
+            },
+          },
+        })
+          .catch((e) => console.error(e))
+          .finally(() => (export_modal = false))
+      }
+    })
   }
 
   function generate() {
@@ -153,7 +172,7 @@
       </button>
       <div class="flex flex-row flex-wrap justify-center p-10">
         <button
-          on:click={export_zip}
+          on:click={publish_to_filesystem}
           class="w-1/3 aspect-square m-3 bg-gray-300 hover:bg-blue-600 hover:scale-105 active:scale-100 rounded-md text-black hover:text-white text-center"
         >
           <svg

@@ -1,17 +1,14 @@
 use std::fs::File;
 
-use log::debug;
 use serde_json::to_writer;
-use tauri::{
-    api::{dialog::FileDialogBuilder, path::download_dir},
-    command, AppHandle, Manager, State,
-};
+use tauri::{command, AppHandle, Manager, State};
 
-use crate::{state::AppState, utils::zip_dir};
 use crate::{
+    backends::{filesystem::FilesystemBackend, PublishingBackend},
     prelude::*,
-    state::{Link, User},
+    state::{BackendInfo, Link, User},
 };
+use crate::{state::AppState, utils::zip_dir};
 
 #[command]
 pub fn toggle_preview_window(handle: AppHandle) -> Result<()> {
@@ -56,21 +53,20 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
 }
 
 #[command]
-pub fn export_zip(handle: AppHandle) -> Result<()> {
-    let zip_file = handle
+pub fn publish_to_backend(backend_info: BackendInfo, handle: AppHandle) -> Result<()> {
+    // Export the site to a zip file
+    let export_path = handle
         .path_resolver()
         .app_cache_dir()
         .unwrap()
         .join("website.zip");
-    FileDialogBuilder::new()
-        .set_file_name("website.zip")
-        .set_directory(download_dir().unwrap())
-        .save_file(move |f| {
-            if let Some(file) = f {
-                debug!("Saving website bundle to {}", file.to_str().unwrap());
-                std::fs::copy(zip_file, file).unwrap();
-            }
-        });
+
+    match backend_info {
+        BackendInfo::Filesystem { target } => {
+            FilesystemBackend::publish(&export_path, target)?;
+        }
+    }
+
     Ok(())
 }
 

@@ -3,9 +3,7 @@
     windows_subsystem = "windows"
 )]
 
-use ipc::{
-    add_link, export_zip, generate_site, get_user, remove_link, toggle_preview_window, update_user,
-};
+use ipc::{add_link, generate_site, get_user, remove_link, toggle_preview_window, update_user};
 use log::debug;
 use server::start_server;
 use state::AppState;
@@ -16,6 +14,9 @@ use std::{
 };
 use tauri::{Manager, WindowEvent};
 
+use crate::ipc::publish_to_backend;
+
+mod backends;
 mod error;
 mod ipc;
 mod prelude;
@@ -76,7 +77,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             toggle_preview_window,
             generate_site,
-            export_zip,
+            publish_to_backend,
             remove_link,
             add_link,
             update_user,
