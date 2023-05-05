@@ -1,10 +1,9 @@
 use log::{debug, error};
 use mime_guess::from_path;
-use std::{fs::File, sync::mpsc::TryRecvError};
 use std::net::SocketAddr;
 use std::path::PathBuf;
-use std::sync::mpsc::Receiver;
 use std::thread;
+use std::{fs::File, sync::mpsc::Receiver, sync::Arc};
 use tiny_http::{Header, Request, Response, Server};
 
 use crate::prelude::*;
@@ -52,27 +51,38 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
         .unwrap()
         .to_owned();
 
-    thread::spawn(move || {
-        let server = Server::http(addr).unwrap();
+    let server = Arc::new(Server::http(addr).unwrap());
+
+    // Spawn a thread to listen for the shutdown signal, and unblock ( shutdown ) the http server.
+    let server_ = server.clone();
+    std::thread::spawn(move || {
+        let server = server_;
 
         loop {
-            match receiver.try_recv() {
-                Ok(c) if c == 1 => break,
-                Err(TryRecvError::Disconnected) => {
+            match receiver.recv() {
+                Ok(c) if c == 1 => {
+                    server.unblock();
+                    break;
+                }
+                Err(_) => {
                     error!("Disconnected");
+                    server.unblock();
                     break;
                 }
                 _ => (),
             }
-            match server.try_recv() {
-                Ok(Some(rq)) => {
-                    if let Err(e) = serve_static_file(rq, PathBuf::from(&path)) {
-                        error!("Request failed: {e}");
-                    };
-                }
-                Ok(_) => (),
-                Err(e) => error!("{e}"),
+        }
+    });
+
+    // Spawn a thread to run the http server.
+    thread::spawn(move || loop {
+        match server.recv() {
+            Ok(rq) => {
+                if let Err(e) = serve_static_file(rq, PathBuf::from(&path)) {
+                    error!("Request failed: {e}");
+                };
             }
+            Err(e) => error!("{e}"),
         }
     });
 }
