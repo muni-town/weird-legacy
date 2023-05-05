@@ -29,11 +29,22 @@ fn main() {
     let (tx, rx) = sync_channel(1);
     tauri::Builder::default()
         .on_window_event(move |event| {
-            if let WindowEvent::CloseRequested { .. } = event.event() {
-                if let Some(win) = event.window().get_window("preview") {
-                    win.close().unwrap();
+            match event.window().label() {
+                "preview" => {
+                    if let WindowEvent::CloseRequested { api, .. } = event.event() {
+                        event.window().hide().unwrap();
+                        api.prevent_close();
+                    }
                 }
-                tx.send(1).expect("Failed to send close signal");
+                "main" => {
+                    if let WindowEvent::CloseRequested { .. } = event.event() {
+                        if let Some(win) = event.window().get_window("preview") {
+                            win.close().unwrap();
+                        }
+                        tx.send(1).expect("Failed to send close signal");
+                    }
+                }
+                _ => (),
             }
         })
         .setup(move |app| {

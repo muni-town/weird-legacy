@@ -14,18 +14,15 @@ use crate::{
 };
 
 #[command]
-pub fn toggle_preview_window(state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
-    if *state.preview.lock().unwrap() {
-        if let Some(w) = handle.get_window("preview") {
-            w.hide()?;
+pub fn toggle_preview_window(handle: AppHandle) -> Result<()> {
+    if let Some(w) = handle.get_window("preview") {
+        if let Ok(visible) = w.is_visible() {
+            if visible {
+                w.hide()?;
+            } else {
+                w.show()?;
+            }
         }
-        *state.preview.lock().unwrap() = false;
-    } else {
-        if let Some(w) = handle.get_window("preview") {
-            w.show()?;
-        }
-
-        *state.preview.lock().unwrap() = true;
     }
     Ok(())
 }

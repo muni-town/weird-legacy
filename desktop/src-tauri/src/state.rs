@@ -21,7 +21,5 @@ pub struct User {
 
 #[derive(Debug, Default)]
 pub struct AppState {
-    /// state of the window if it is hidden or shown.
-    pub preview: Mutex<bool>,
     pub data: Mutex<User>,
 }
