@@ -1,17 +1,18 @@
 use std::fs::File;
 
-use log::debug;
+use log::{debug, warn};
 use serde_json::to_writer;
 use tauri::{
     api::{dialog::FileDialogBuilder, path::download_dir},
     command, AppHandle, Manager, State,
 };
 
-use crate::{state::AppState, utils::zip_dir};
 use crate::{
     prelude::*,
     state::{Link, User},
+    utils,
 };
+use crate::{state::AppState, utils::zip_dir};
 
 #[command]
 pub fn toggle_preview_window(handle: AppHandle) -> Result<()> {
@@ -109,8 +110,15 @@ pub fn update_user(
 }
 
 #[command]
-pub fn get_user(state: State<'_, AppState>) -> Result<User> {
-    let user: &User = &state.data.lock().unwrap();
+pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<User> {
+    let user: User = match utils::load_user(handle) {
+        Ok(u) => u,
+        Err(e) => {
+            warn!("Could not load user data: {e}");
+            let user: &User = &state.data.lock().unwrap();
 
-    Ok(user.clone())
+            user.clone()
+        }
+    };
+    Ok(user)
 }
