@@ -9,7 +9,7 @@ use tauri::{
 
 use crate::{
     prelude::*,
-    state::{Link, User},
+    state::{Content, Link, User},
     utils,
 };
 use crate::{state::AppState, utils::zip_dir};
@@ -42,9 +42,16 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .join("website.zip");
     let content_path = File::create(template_dir.join("content.json"))?;
 
-    let user: &User = &state.data.lock().unwrap();
+    let user: &User = &state.user.lock().unwrap();
+    let links: Vec<Link> = state.links.lock().unwrap().to_vec();
 
-    to_writer(content_path, user)?;
+    to_writer(
+        content_path,
+        &Content {
+            user: user.clone(),
+            links,
+        },
+    )?;
 
     // zip the website bundle.
     zip_dir(
@@ -76,36 +83,28 @@ pub fn export_zip(handle: AppHandle) -> Result<()> {
 }
 
 #[command]
-pub fn remove_link(url: String, text: String, state: State<'_, AppState>) -> Result<()> {
-    state
-        .data
-        .lock()
-        .unwrap()
-        .links
-        .retain(|v| !(v.url == url && v.text == text));
+pub fn remove_link(id: usize, state: State<'_, AppState>) -> Result<()> {
+    state.links.lock().unwrap().retain(|l| l.id != id);
     Ok(())
 }
 
 #[command]
-pub fn add_link(url: String, text: String, state: State<'_, AppState>) -> Result<()> {
-    state.data.lock().unwrap().links.push(Link { text, url });
+pub fn add_link(link: Link, state: State<'_, AppState>) -> Result<()> {
+    state.links.lock().unwrap().push(link);
     Ok(())
 }
 
 #[command]
-pub fn update_user(
-    name: String,
-    username: String,
-    description: String,
-    state: State<'_, AppState>,
-) -> Result<()> {
-    let links = (*state.data.lock().unwrap().links).to_vec();
-    *state.data.lock().unwrap() = User {
-        name,
-        username,
-        description,
-        links,
-    };
+pub fn update_user(user: User, state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
+    let user_file = File::create(
+        handle
+            .path_resolver()
+            .app_config_dir()
+            .unwrap()
+            .join("user.json"),
+    )?;
+    to_writer(user_file, &user)?;
+    *state.user.lock().unwrap() = user;
     Ok(())
 }
 
@@ -115,7 +114,7 @@ pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<User> {
         Ok(u) => u,
         Err(e) => {
             warn!("Could not load user data: {e}");
-            let user: &User = &state.data.lock().unwrap();
+            let user: &User = &state.user.lock().unwrap();
 
             user.clone()
         }

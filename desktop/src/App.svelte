@@ -5,36 +5,36 @@
   import { Link } from './bindings/Link'
 
   let links: Array<Link> = []
+  let user: User
+  let id = 1
   let url = ''
   let text = ''
-  let name = ''
-  let username = ''
-  let description = ''
   let user_exists = true
   let loading = false
   let export_modal = false
 
   function addLink() {
-    links = [...links, { text, url }]
-    invoke('add_link', { url, text }).catch((e) => {
+    let link: Link = { id, text, url }
+    links = [...links, link]
+    invoke('add_link', { link }).catch((e) => {
       console.error(e)
     })
+    id += 1
     url = ''
     text = ''
   }
 
-  function removeLink(url: string, text: string) {
-    invoke('remove_link', { url, text }).catch((e) => console.error(e))
+  function removeLink(id: number) {
+    invoke('remove_link', { id }).catch((e) => console.error(e))
+    invoke('get_links')
+      .then((l: Array<Link>) => (links = l))
+      .catch((e) => console.error(e))
   }
 
   onMount(() => {
     invoke('get_user')
-      .then((u: User) => {
-        name = u.name
-        username = u.username
-        description = u.description
-        links = u.links
-      })
+      .then((u: User) => (user = u))
+      .catch((e) => console.error(e))
   })
 
   function export_zip() {
@@ -57,9 +57,7 @@
   }
 
   function addUser() {
-    invoke('update_user', { name, username, description }).then(
-      () => (user_exists = true)
-    )
+    invoke('update_user', { user }).then(() => (user_exists = true))
   }
 
   function toggle_preview() {
@@ -100,21 +98,21 @@
         <input
           required
           type="text"
-          bind:value={name}
+          bind:value={user.name}
           class="text-white bg-gray-700 rounded p-2"
           placeholder="Enter your name.."
         />
         <input
           required
           type="text"
-          bind:value={username}
+          bind:value={user.username}
           class="text-white bg-gray-700 rounded p-2"
           placeholder="Enter you username.."
         />
         <textarea
           cols="20"
           rows="4"
-          bind:value={description}
+          bind:value={user.description}
           placeholder="About you.."
           class="text-white bg-gray-700 rounded p-2"
         />
@@ -254,7 +252,7 @@
         <div class="flex-row w-3/4 p-3 m-2 bg-gray-700 rounded-md">
           <button
             class="relative float-right top-0 right-0 hover:scale-125 active:scale-100"
-            on:click={() => removeLink(link.url, link.text)}
+            on:click={() => removeLink(link.id)}
           >
             <div class="text-white hover:text-red-400">
               <svg

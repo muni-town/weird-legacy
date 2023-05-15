@@ -6,6 +6,7 @@ use ts_rs::TS;
 #[derive(Debug, Clone, Serialize, Deserialize, TS)]
 #[ts(export, export_to = "../src/bindings/")]
 pub struct Link {
+    pub id: usize,
     pub text: String,
     pub url: String,
 }
@@ -16,10 +17,18 @@ pub struct User {
     pub name: String,
     pub username: String,
     pub description: String,
+    pub photo: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, TS)]
+#[ts(export, export_to = "../src/bindings/")]
+pub struct Content {
+    pub user: User,
     pub links: Vec<Link>,
 }
 
 #[derive(Debug, Default)]
 pub struct AppState {
-    pub data: Mutex<User>,
+    pub user: Mutex<User>,
+    pub links: Mutex<Vec<Link>>,
 }

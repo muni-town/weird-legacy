@@ -14,14 +14,13 @@ use crate::state::User;
 
 pub mod zip;
 
-// TODO: load from and save to a diffent file.
 pub fn load_user(handle: AppHandle) -> Result<User> {
-    let content_file = handle
+    let user_file = handle
         .path_resolver()
-        .app_local_data_dir()
+        .app_config_dir()
         .unwrap()
-        .join("template/content.json");
-    let file = File::open(content_file)?;
+        .join("user.json");
+    let file = File::open(user_file)?;
     let reader = BufReader::new(file);
     let user = from_reader(reader)?;
     Ok(user)

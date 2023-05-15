@@ -63,6 +63,10 @@ fn main() {
             )
             .build()?
             .hide()?;
+            let config_path = app.path_resolver().app_config_dir().unwrap();
+            if !config_path.exists() {
+                fs::create_dir_all(&config_path).expect("error creating config directory");
+            }
             Ok(())
         })
         .manage(AppState::default())

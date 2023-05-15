@@ -1,8 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
+  import type { Content } from '../../../src/bindings/Content'
+  import type { Link } from '../../../src/bindings/Link'
+  import type { User } from '../../../src/bindings/User'
 
-  type Link = { text: string; url: string }
-
+  let user: User = {
+    name: '',
+    username: 'user',
+    description: '',
+    photo: ''
+  }
   let name = ''
   let username = ''
   let photo = 'https://unavatar.io/user'
@@ -11,11 +18,15 @@
   onMount(async () => {
     let res = await fetch('/content.json')
     if (res.ok) {
-      let data = await res.json()
-      name = data.name
+      let data: Content = await res.json()
+      user = data.user
+      name = data.user.name
       links = data.links
-      username = data.username
-      photo = `https://unavatar.io/${username}`
+      username = data.user.username
+      if (user.photo)
+        photo = user.photo
+      else
+        photo = `https://unavatar.io/${username}`
     }
   })
 </script>
