@@ -8,7 +8,11 @@ use ipc::{
 };
 use server::start_server;
 use state::AppState;
-use std::{fs, path::PathBuf, sync::mpsc::sync_channel};
+use std::{
+    fs,
+    path::PathBuf,
+    sync::{mpsc::sync_channel, Mutex},
+};
 use tauri::{Manager, WindowEvent};
 
 mod error;
@@ -20,6 +24,7 @@ mod utils;
 
 fn main() {
     tracing_subscriber::fmt().init();
+    let exit = Mutex::new(false);
 
     let (tx, rx) = sync_channel(1);
     tauri::Builder::default()
@@ -27,7 +32,9 @@ fn main() {
             "preview" => {
                 if let WindowEvent::CloseRequested { api, .. } = event.event() {
                     event.window().hide().unwrap();
-                    api.prevent_close();
+                    if !*exit.lock().unwrap() {
+                        api.prevent_close();
+                    }
                 }
             }
             "main" => {
@@ -35,6 +42,7 @@ fn main() {
                     if let Some(win) = event.window().get_window("preview") {
                         win.close().unwrap();
                     }
+                    *exit.lock().unwrap() = true;
                     tx.send(1).expect("Failed to send close signal");
                 }
             }
