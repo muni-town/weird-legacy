@@ -152,7 +152,7 @@
       <div class="flex flex-row flex-wrap justify-center p-10">
         <button
           on:click={export_zip}
-          class="w-1/3 aspect-square m-3 bg-gray-300 hover:bg-blue-600 hover:scale-105 active:scale-100 rounded-md text-black hover:text-white text-center"
+          class="w-1/3 aspect-square m-3 bg-gray-300 hover:bg-blue-600 hover:scale-105 active:scale-100 rounded-md text-black transition-all hover:text-white text-center"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
