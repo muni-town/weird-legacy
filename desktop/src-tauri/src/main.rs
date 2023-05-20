@@ -4,7 +4,8 @@
 )]
 
 use ipc::{
-    add_link, export_zip, generate_site, get_user, remove_link, toggle_preview_window, update_user,
+    add_link, export_zip, generate_site, get_links, get_user, remove_link, toggle_preview_window,
+    update_user,
 };
 use server::start_server;
 use state::AppState;
@@ -85,7 +86,8 @@ fn main() {
             remove_link,
             add_link,
             update_user,
-            get_user
+            get_user,
+            get_links
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
