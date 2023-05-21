@@ -9,8 +9,10 @@ use std::{
 };
 use tauri::AppHandle;
 
-use crate::prelude::*;
-use crate::state::User;
+use crate::{
+    prelude::*,
+    state::{Content, Link, User},
+};
 
 pub mod zip;
 
@@ -24,6 +26,18 @@ pub fn load_user(handle: AppHandle) -> Result<User> {
     let reader = BufReader::new(file);
     let user = from_reader(reader)?;
     Ok(user)
+}
+
+pub fn load_links(handle: AppHandle) -> Result<Vec<Link>> {
+    let content_file = handle
+        .path_resolver()
+        .app_local_data_dir()
+        .unwrap()
+        .join("template/content.json");
+    let file = File::open(content_file)?;
+    let reader = BufReader::new(file);
+    let content: Content = from_reader(reader)?;
+    Ok(content.links)
 }
 
 pub fn extract_template(filepath: PathBuf, dest: &Path) {

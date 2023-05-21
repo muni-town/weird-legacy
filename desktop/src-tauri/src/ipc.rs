@@ -111,7 +111,10 @@ pub fn update_user(user: User, state: State<'_, AppState>, handle: AppHandle) ->
 #[command]
 pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<User> {
     let user: User = match utils::load_user(handle) {
-        Ok(u) => u,
+        Ok(u) => {
+            *state.user.lock().unwrap() = u.clone();
+            u
+        }
         Err(e) => {
             warn!("Could not load user data: {e}");
             let user: &User = &state.user.lock().unwrap();
@@ -120,4 +123,19 @@ pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<User> {
         }
     };
     Ok(user)
+}
+
+#[command]
+pub fn get_links(state: State<'_, AppState>, handle: AppHandle) -> Result<Vec<Link>> {
+    let links: Vec<Link> = match utils::load_links(handle) {
+        Ok(u) => {
+            *state.links.lock().unwrap() = u.to_vec();
+            u
+        }
+        Err(e) => {
+            warn!("Could not load links: {e}");
+            state.links.lock().unwrap().to_vec()
+        }
+    };
+    Ok(links)
 }

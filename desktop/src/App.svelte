@@ -26,14 +26,20 @@
 
   function removeLink(id: number) {
     invoke('remove_link', { id }).catch((e) => console.error(e))
-    invoke('get_links')
-      .then((l: Array<Link>) => (links = l))
-      .catch((e) => console.error(e))
+    links = links.filter((v) => v.id !== id)
   }
 
   onMount(() => {
     invoke('get_user')
       .then((u: User) => (user = u))
+      .catch((e) => console.error(e))
+    invoke('get_links')
+      .then((l: Array<Link>) => {
+        links = l
+        if (l.length > 0) {
+          id = l[l.length - 1].id + 1
+        }
+      })
       .catch((e) => console.error(e))
   })
 
