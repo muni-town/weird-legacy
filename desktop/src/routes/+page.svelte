@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { invoke } from '@tauri-apps/api/tauri'
-  import { User } from './bindings/User'
-  import { Link } from './bindings/Link'
+  import type { User } from '../bindings/User'
+  import type { Link } from '../bindings/Link'
 
   let links: Array<Link> = []
   let user: User

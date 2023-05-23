@@ -1,4 +1,5 @@
 {
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
     "target": "esnext",
     "useDefineForClassFields": true,
@@ -6,7 +7,6 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "importsNotUsedAsValues": "remove",
-    "baseUrl": ".",
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     /**
@@ -17,6 +17,5 @@
      */
     "allowJs": true,
     "checkJs": true
-  },
-  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.js", "src/**/*.svelte"]
+  }
 }
