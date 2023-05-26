@@ -2,3 +2,16 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --btn-focus-scale: 0.9
+}
+
+.btn {
+  @apply p-2;
+  animation: none;
+}
+
+.btn:active {
+  transition: transform 0.1s !important;
+}

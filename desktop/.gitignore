@@ -2,6 +2,7 @@ node_modules
 dist
 build
 .svelte-kit
+.env
 
 *.log
 vite.config.js.timestamp-*
