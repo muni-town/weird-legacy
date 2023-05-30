@@ -54,7 +54,8 @@
       },
       "window": {
         "create": true,
-        "close": true
+        "close": true,
+        "show": true
       },
       "clipboard": {
         "writeText": true

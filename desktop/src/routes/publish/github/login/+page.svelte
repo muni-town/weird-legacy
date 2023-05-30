@@ -1,16 +1,16 @@
 <script lang="ts">
   import { browser } from '$app/environment'
   import { goto } from '$app/navigation'
-  import { GH_ACCESS_TOKEN_NAME, GH_CLIENT_ID } from 'config'
+  import { WebviewWindow } from '@tauri-apps/api/window'
   import { Body, fetch } from '@tauri-apps/api/http'
+  import { GH_ACCESS_TOKEN_NAME, GH_CLIENT_ID } from 'config'
   import { onDestroy } from 'svelte'
+  import { clipboard } from '@tauri-apps/api'
   const GH_WINDOW_NAME = 'github_authorize'
 
   let loginData: { url: string; userCode: string } | null = null
   let authPollTask = null
   onDestroy(async () => {
-    const { WebviewWindow } = await import('@tauri-apps/api/window')
-
     const ghWindow = WebviewWindow.getByLabel(GH_WINDOW_NAME)
     try {
       // Ignore errors if the window isn't open
@@ -27,8 +27,6 @@
       if (localStorage.getItem(GH_ACCESS_TOKEN_NAME)) {
         goto('/publish/github')
       }
-
-      // return
 
       const codeResp = await fetch<{
         device_code: string
@@ -109,7 +107,6 @@
 
   let codeCopyText: 'Click to Copy' | 'Copied!' = 'Click to Copy'
   const copyCode = async () => {
-    const { clipboard } = await import('@tauri-apps/api')
     if (browser) {
       codeCopyText = 'Copied!'
       setTimeout(() => (codeCopyText = 'Click to Copy'), 500)
@@ -119,8 +116,6 @@
 
   const openGithubWindow = async () => {
     if (browser) {
-      const { WebviewWindow } = await import('@tauri-apps/api/window')
-
       new WebviewWindow(GH_WINDOW_NAME, {
         center: true,
         title: 'GitHub: Authorize Weird',

@@ -123,12 +123,7 @@
           placeholder="About you.."
           class="text-white bg-gray-700 rounded p-2"
         />
-        <button
-          class="btn btn-primary"
-          type="submit"
-        >
-          Save
-        </button>
+        <button class="btn btn-primary" type="submit"> Save </button>
       </form>
     </div>
   {/if}
@@ -141,20 +136,7 @@
           on:click={() => (export_modal = false)}
         >
           <div class="text-white transition hover:scale-125 hover:text-red-300">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              class="w-6 h-6"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <Icon name="x" size={20} />
           </div>
         </button>
         <div class="flex flex-row flex-wrap justify-center p-10">
@@ -244,20 +226,7 @@
             on:click={() => removeLink(link.id)}
           >
             <div class="text-white hover:text-red-400">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke-width="1.5"
-                stroke="currentColor"
-                class="w-6 h-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              <Icon name="x" size={16} />
             </div>
           </button>
           <div>{link.text}</div>

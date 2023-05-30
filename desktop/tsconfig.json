@@ -8,6 +8,7 @@
     "resolveJsonModule": true,
     "importsNotUsedAsValues": "remove",
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     /**
      * Typecheck JS in `.svelte` and `.js` files by default.
