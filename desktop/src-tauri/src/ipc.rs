@@ -63,6 +63,19 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
     Ok(())
 }
 
+/// Get the export zip file contents encoded as base64
+#[command]
+pub fn get_export_zip_base64(handle: AppHandle) -> Result<String> {
+    use base64::Engine;
+    let zip_file = handle
+        .path_resolver()
+        .app_cache_dir()
+        .unwrap()
+        .join("website.zip");
+    let contents = std::fs::read(&zip_file)?;
+    Ok(base64::engine::general_purpose::STANDARD.encode(contents))
+}
+
 #[command]
 pub fn export_zip(handle: AppHandle) -> Result<()> {
     let zip_file = handle

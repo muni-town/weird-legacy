@@ -21,9 +21,7 @@
         "icons/icon.icns",
         "icons/icon.ico"
       ],
-      "resources": [
-        "assets/template.zip"
-      ],
+      "resources": ["assets/template.zip"],
       "externalBin": [],
       "copyright": "MIT",
       "category": "DeveloperTool",
@@ -49,7 +47,19 @@
       "active": false
     },
     "allowlist": {
-      "all": false
+      "all": false,
+      "http": {
+        "scope": ["https://github.com/*"],
+        "request": true
+      },
+      "window": {
+        "create": true,
+        "close": true,
+        "show": true
+      },
+      "clipboard": {
+        "writeText": true
+      }
     },
     "security": {
       "csp": null

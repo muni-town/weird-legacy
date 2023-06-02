@@ -4,8 +4,8 @@
 )]
 
 use ipc::{
-    add_link, export_zip, generate_site, get_links, get_user, remove_link, toggle_preview_window,
-    update_user,
+    add_link, export_zip, generate_site, get_export_zip_base64, get_links, get_user, remove_link,
+    toggle_preview_window, update_user,
 };
 use server::start_server;
 use state::AppState;
@@ -82,6 +82,7 @@ fn main() {
         .invoke_handler(tauri::generate_handler![
             toggle_preview_window,
             generate_site,
+            get_export_zip_base64,
             export_zip,
             remove_link,
             add_link,
