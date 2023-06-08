@@ -16,12 +16,12 @@ pub struct Link {
 pub struct User {
     pub name: String,
     pub username: String,
-    pub description: String,
+    pub title: String,
+    pub about: String,
     pub photo: Option<String>,
 }
 
-#[derive(Debug, Serialize, Deserialize, TS)]
-#[ts(export, export_to = "../src/bindings/")]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Content {
     pub user: User,
     pub links: Vec<Link>,

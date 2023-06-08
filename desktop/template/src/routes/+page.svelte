@@ -1,34 +1,14 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
-  import type { Content } from '../../../src/bindings/Content'
   import type { Link } from '../../../src/bindings/Link'
-  import type { User } from '../../../src/bindings/User'
 
-  let user: User = {
-    name: '',
-    username: 'user',
-    description: '',
-    photo: ''
-  }
-  let name = ''
-  let username = ''
+  let name = 'User Name'
+  let username = 'user'
   let photo = 'https://unavatar.io/user'
-  let links: Array<Link> = []
-
-  onMount(async () => {
-    let res = await fetch('/content.json')
-    if (res.ok) {
-      let data: Content = await res.json()
-      user = data.user
-      name = data.user.name
-      links = data.links
-      username = data.user.username
-      if (user.photo)
-        photo = user.photo
-      else
-        photo = `https://unavatar.io/${username}`
-    }
-  })
+  let title = 'Programmer'
+  let links: Array<Link> = [
+    { id: 1, url: 'https://link1.example.com', text: 'Link 1' },
+    { id: 2, url: 'https://link2.example.com', text: 'Link 2' },
+  ]
 </script>
 
 <div
@@ -38,14 +18,15 @@
     class="card w-full sm:w-2/3 lg:w-1/3 mx-auto bg-white md:m-5 shadow-md hover:shadow rounded-md"
   >
     <img
+      id="photo"
       class="w-32 mx-auto rounded-full mt-5 border-8 border-white"
       src={photo}
       alt=""
     />
-    <div class="text-center mt-2 text-3xl font-medium">{name}</div>
-    <div class="text-center mt-2 font-light text-sm">@{username}</div>
-    <div class="text-center font-normal text-lg">Software Engineer</div>
-    <div class="px-6 text-center mt-2 font-light text-sm">
+    <div id="name" class="text-center mt-2 text-3xl font-medium">{ name }</div>
+    <div id="username" class="text-center mt-2 font-light text-sm">@{ username }</div>
+    <div id="title" class="text-center font-normal text-lg">{ title }</div>
+    <div id="about" class="px-6 text-center mt-2 font-light text-sm">
       <p>
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus
         aliquam eveniet iste excepturi quia atque similique fugit repellendus
@@ -63,20 +44,19 @@
         <span class="font-bold">2.0 k</span> Following
       </div>
     </div>
-    <div class="w-full text-center">
+    <div id="links" class="w-full text-center">
       {#each links as link}
         <div
-          class="bg-gray-100 hover:bg-gray-200 w-5/6 ml-auto mr-auto px-5 py-2 my-2 rounded-lg text-center"
+          class="link"
         >
           <a
             href={link.url}
             target="_blank"
-            class="text-gray-800 text-center hover:text-gray-800"
           >
-            <div class="text-gray-800">
+            <div class="link-text">
               {link.text}
             </div>
-            <div class="text-blue-500">
+            <div class="link-url">
               {link.url}
             </div>
           </a>

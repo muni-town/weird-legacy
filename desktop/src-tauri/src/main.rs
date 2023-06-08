@@ -22,6 +22,7 @@ mod prelude;
 mod server;
 mod state;
 mod utils;
+mod generator;
 
 fn main() {
     tracing_subscriber::fmt().init();
