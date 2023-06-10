@@ -1189,6 +1189,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "html_editor"
+version = "0.6.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d80d1f51964cec994bd347e86d0dc9a1b21a0dfb4bbbe9a14ace84cda244e21"
+
+[[package]]
 name = "http"
 version = "0.2.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3666,9 +3672,10 @@ dependencies = [
 
 [[package]]
 name = "weird"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
  "base64 0.21.2",
+ "html_editor",
  "log",
  "mime_guess",
  "serde",

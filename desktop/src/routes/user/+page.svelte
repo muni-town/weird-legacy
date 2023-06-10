@@ -27,10 +27,17 @@
       class="text-white bg-gray-700 rounded p-2"
       placeholder="Enter you username.."
     />
+    <input
+      required
+      type="text"
+      bind:value={$user.title}
+      class="text-white bg-gray-700 rounded p-2"
+      placeholder="Enter you title.."
+    />
     <textarea
       cols="20"
       rows="4"
-      bind:value={$user.description}
+      bind:value={$user.about}
       placeholder="About you.."
       class="text-white bg-gray-700 rounded p-2"
     />

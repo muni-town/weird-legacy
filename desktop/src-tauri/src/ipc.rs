@@ -9,10 +9,9 @@ use tauri::{
 
 use crate::{
     prelude::*,
-    state::{Content, Link, User},
-    utils,
+    state::{Content, Link, User, AppState},
+    utils::{self, zip_dir}, generator::generate,
 };
-use crate::{state::AppState, utils::zip_dir};
 
 #[command]
 pub fn toggle_preview_window(handle: AppHandle) -> Result<()> {
@@ -40,17 +39,16 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .app_cache_dir()
         .unwrap()
         .join("website.zip");
-    let content_path = File::create(template_dir.join("content.json"))?;
 
     let user: &User = &state.user.lock().unwrap();
     let links: Vec<Link> = state.links.lock().unwrap().to_vec();
 
-    to_writer(
-        content_path,
-        &Content {
+    generate(
+        Content {
             user: user.clone(),
             links,
         },
+        &handle,
     )?;
 
     // zip the website bundle.
@@ -72,7 +70,7 @@ pub fn get_export_zip_base64(handle: AppHandle) -> Result<String> {
         .app_cache_dir()
         .unwrap()
         .join("website.zip");
-    let contents = std::fs::read(&zip_file)?;
+    let contents = std::fs::read(zip_file)?;
     Ok(base64::engine::general_purpose::STANDARD.encode(contents))
 }
 
