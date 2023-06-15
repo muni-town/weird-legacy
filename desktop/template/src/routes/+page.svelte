@@ -23,9 +23,11 @@
       src={photo}
       alt=""
     />
-    <div id="name" class="text-center mt-2 text-3xl font-medium">{ name }</div>
-    <div id="username" class="text-center mt-2 font-light text-sm">@{ username }</div>
-    <div id="title" class="text-center font-normal text-lg">{ title }</div>
+    <div id="name" class="text-center mt-2 text-3xl font-medium">{name}</div>
+    <div id="username" class="text-center mt-2 font-light text-sm">
+      @{username}
+    </div>
+    <div id="title" class="text-center font-normal text-lg">{title}</div>
     <div id="about" class="px-6 text-center mt-2 font-light text-sm">
       <p>
         Lorem, ipsum dolor sit amet consectetur adipisicing elit. Temporibus
@@ -46,13 +48,8 @@
     </div>
     <div id="links" class="w-full text-center">
       {#each links as link}
-        <div
-          class="link"
-        >
-          <a
-            href={link.url}
-            target="_blank"
-          >
+        <div class="link">
+          <a href={link.url} target="_blank">
             <div class="link-text">
               {link.text}
             </div>

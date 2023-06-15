@@ -8,7 +8,10 @@
   </h1>
 
   <div>
-    <a href="/" class="text-white transition hover:scale-125 hover:text-red-400 absolute top-5 right-5">
+    <a
+      href="/"
+      class="text-white transition hover:scale-125 hover:text-red-400 absolute top-5 right-5"
+    >
       <Icon name="x" size={20} />
     </a>
   </div>

@@ -1,8 +1,7 @@
 <script lang="ts">
-  import { goto } from "$app/navigation"
-  import { invoke } from "@tauri-apps/api/tauri"
-  import Icon from "components/Icon.svelte"
-
+  import { goto } from '$app/navigation'
+  import { invoke } from '@tauri-apps/api/tauri'
+  import Icon from 'components/Icon.svelte'
 
   function exportZip() {
     invoke('export_zip')
@@ -13,10 +12,7 @@
 
 <div class="absolute top-0 w-screen h-screen overflow-hidden">
   <div class="absolute top-0 w-full transition h-full bg-gray-800 z-20">
-    <button
-      class="absolute top-5 right-5"
-      on:click={() => goto('/')}
-    >
+    <button class="absolute top-5 right-5" on:click={() => goto('/')}>
       <div class="text-white transition hover:scale-125 hover:text-red-300">
         <Icon name="x" size={20} />
       </div>
@@ -65,14 +61,9 @@
         href="/publish/github"
         class="w-1/3 aspect-square m-3 bg-gray-300 hover:bg-blue-600 hover:scale-105 active:scale-100 rounded-md text-black transition-all hover:text-white text-center"
       >
-        <Icon
-          name="github"
-          size={64}
-          class="w-1/2 h-1/2 mx-auto mt-5 mb-2"
-        />
+        <Icon name="github" size={64} class="w-1/2 h-1/2 mx-auto mt-5 mb-2" />
         <div>Github Pages</div>
       </a>
     </div>
   </div>
 </div>
-

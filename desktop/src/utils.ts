@@ -5,10 +5,10 @@ import { goto } from '$app/navigation'
 
 export function getOctokit(): Octokit {
   if (!browser) {
-    throw "Octokit only works in client code";
+    throw 'Octokit only works in client code'
   }
 
-  const accessToken = localStorage?.getItem(GH_ACCESS_TOKEN_NAME) || null;
+  const accessToken = localStorage?.getItem(GH_ACCESS_TOKEN_NAME) || null
 
   // Make sure we have a GitHub access token
   if (!accessToken) {

@@ -1,12 +1,13 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { invoke } from "@tauri-apps/api/tauri"
+  import { invoke } from '@tauri-apps/api/tauri'
   import { user } from '../../store'
 
   function updateUser() {
     invoke('update_user', { user: $user }).then(() => goto('/'))
   }
 </script>
+
 <div class="absolute top-0 w-full transition h-full bg-gray-800 z-10">
   <form
     on:submit|preventDefault={updateUser}

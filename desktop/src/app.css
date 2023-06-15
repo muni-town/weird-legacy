@@ -4,7 +4,7 @@
 @tailwind utilities;
 
 :root {
-  --btn-focus-scale: 0.9
+  --btn-focus-scale: 0.9;
 }
 
 .btn {

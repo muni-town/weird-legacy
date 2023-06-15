@@ -63,13 +63,8 @@
 
 <main>
   <header class="h-10 w-screen align-middle">
-    <a
-      href="/user"
-      class="hover:scale-105 active:scale-100"
-    >
-      <div
-        class="ml-auto p-2 text-center text-gray-400 hover:text-white"
-      >
+    <a href="/user" class="hover:scale-105 active:scale-100">
+      <div class="ml-auto p-2 text-center text-gray-400 hover:text-white">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"

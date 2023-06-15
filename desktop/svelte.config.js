@@ -15,10 +15,10 @@ const config = {
       pages: 'dist',
     }),
     alias: {
-      'components': 'src/components',
-      'config': 'src/config',
-      'utils': 'src/utils',
-    }
+      components: 'src/components',
+      config: 'src/config',
+      utils: 'src/utils',
+    },
   },
 }
 
