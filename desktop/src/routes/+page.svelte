@@ -1,47 +1,30 @@
 <script lang="ts">
-  import { onMount } from 'svelte'
   import { invoke } from '@tauri-apps/api/tauri'
   import { goto } from '$app/navigation'
-  import { user } from '../store'
+  import { links, link_id } from '../store'
   import Icon from '../components/Icon.svelte'
-  import type { User } from '../bindings/User'
   import type { Link } from '../bindings/Link'
 
-  let links: Array<Link> = []
-  let id = 1
   let url = ''
   let text = ''
   let loading = false
+  let error = ''
 
   function addLink() {
-    let link: Link = { id, text, url }
-    links = [...links, link]
+    let link: Link = { id: $link_id, text, url }
+    links.set([...$links, link])
     invoke('add_link', { link }).catch((e) => {
       console.error(e)
     })
-    id += 1
+    link_id.set($link_id + 1)
     url = ''
     text = ''
   }
 
   function removeLink(id: number) {
     invoke('remove_link', { id }).catch((e) => console.error(e))
-    links = links.filter((v) => v.id !== id)
+    links.set($links.filter((v) => v.id !== id))
   }
-
-  onMount(() => {
-    invoke('get_user')
-      .then((u: User) => user.set(u))
-      .catch((e) => console.error(e))
-    invoke('get_links')
-      .then((l: Array<Link>) => {
-        links = l
-        if (l.length > 0) {
-          id = l[l.length - 1].id + 1
-        }
-      })
-      .catch((e) => console.error(e))
-  })
 
   function generate() {
     loading = true
@@ -51,7 +34,7 @@
         goto('/export')
       })
       .catch((e) => {
-        console.error(e)
+        error = e
       })
       .finally(() => (loading = false))
   }
@@ -105,9 +88,9 @@
     <button class="btn btn-primary btn-sm" type="submit"> Add Link </button>
   </form>
 
-  {#if links.length > 0}
+  {#if $links.length > 0}
     <div class="flex flex-col justify-start items-center">
-      {#each links as link}
+      {#each $links as link}
         <div class="flex-row w-3/4 p-3 m-2 bg-gray-700 rounded-md">
           <button
             class="relative transition float-right top-0 right-0 hover:scale-125 active:scale-100"
@@ -136,7 +119,7 @@
     {/if}
     <button
       class="btn btn-primary float-right mb-2"
-      disabled={loading || links.length == 0}
+      disabled={loading || $links.length == 0}
       on:click={generate}
     >
       {#if loading}
