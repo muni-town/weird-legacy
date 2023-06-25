@@ -1,12 +1,13 @@
 use crate::{
     error::Error,
     prelude::*,
-    state::{Content, Link},
+    state::{Content, Links},
 };
 use html_editor::{operation::*, parse, Node};
 use std::fs;
 use tauri::AppHandle;
 
+/// Inject to the `index.html`
 pub fn generate(content: Content, handle: &AppHandle) -> Result<()> {
     let index_file = handle
         .path_resolver()
@@ -23,6 +24,7 @@ pub fn generate(content: Content, handle: &AppHandle) -> Result<()> {
     Ok(())
 }
 
+/// Update parsed dom with the data in `Content`
 fn update_dom(dom: &mut Vec<Node>, content: &Content) -> Result<()> {
     if let Some(photo) = content.user.photo.clone() {
         let Some(node) = dom.query_mut(&Selector::from("img#photo")) else {
@@ -54,11 +56,12 @@ fn update_dom(dom: &mut Vec<Node>, content: &Content) -> Result<()> {
     let Some(mut links_node) = dom.query_mut(&Selector::from("div#links")) else {
         return Err(Error::HtmlParse("div#links not found".to_owned()))
     };
-    links_node.children = generate_links(&content.links);
+    links_node.children = generate_links(content.links.as_ref());
     Ok(())
 }
 
-fn generate_links(links: &[Link]) -> Vec<Node> {
+/// Generate vector of link elements to inject into the dom
+fn generate_links(links: &Links) -> Vec<Node> {
     let links: Vec<Node> = links
         .iter()
         .map(|l| {

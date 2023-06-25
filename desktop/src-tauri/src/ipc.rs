@@ -9,7 +9,7 @@ use tauri::{
 
 use crate::{
     prelude::*,
-    state::{Content, Link, User, AppState},
+    state::{Content, Link, User, AppState, Links},
     utils::{self, zip_dir}, generator::generate,
 };
 
@@ -41,7 +41,16 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .join("website.zip");
 
     let user: &User = &state.user.lock().unwrap();
-    let links: Vec<Link> = state.links.lock().unwrap().to_vec();
+    let links: Links = state.links.lock().unwrap().to_vec();
+    let links_file = File::create(
+        handle
+            .path_resolver()
+            .app_config_dir()
+            .unwrap()
+            .join("links.json"),
+    )?;
+
+    to_writer(links_file, &links)?;
 
     generate(
         Content {
@@ -137,8 +146,8 @@ pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<User> {
 }
 
 #[command]
-pub fn get_links(state: State<'_, AppState>, handle: AppHandle) -> Result<Vec<Link>> {
-    let links: Vec<Link> = match utils::load_links(handle) {
+pub fn get_links(state: State<'_, AppState>, handle: AppHandle) -> Result<Links> {
+    let links: Links = match utils::load_links(handle) {
         Ok(u) => {
             *state.links.lock().unwrap() = u.to_vec();
             u

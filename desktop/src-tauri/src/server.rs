@@ -64,8 +64,8 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
                     server.unblock();
                     break;
                 }
-                Err(_) => {
-                    error!("Disconnected");
+                Err(e) => {
+                    error!("Disconnected: {e}");
                     server.unblock();
                     break;
                 }

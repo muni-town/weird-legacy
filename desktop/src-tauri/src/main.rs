@@ -71,6 +71,7 @@ fn main() {
                 "preview",
                 tauri::WindowUrl::External("http://127.0.0.1:7878".parse().unwrap()),
             )
+            .title("Preview")
             .build()?
             .hide()?;
             let config_path = app.path_resolver().app_config_dir().unwrap();
