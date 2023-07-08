@@ -11,7 +11,7 @@ use tauri::AppHandle;
 
 use crate::{
     prelude::*,
-    state::{User, Links},
+    state::{User, Links, Content},
 };
 
 pub mod zip;
@@ -40,6 +40,10 @@ pub fn load_links(handle: AppHandle) -> Result<Links> {
     let reader = BufReader::new(file);
     let links: Links = from_reader(reader)?;
     Ok(links)
+}
+
+/// Write user profile and links to config.toml
+pub fn write_config(content: Content, path: &PathBuf) {
 }
 
 pub fn extract_template(filepath: PathBuf, dest: &Path) {

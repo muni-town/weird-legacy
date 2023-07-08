@@ -28,6 +28,15 @@ tracing-subscriber = "0.3.17"
 tiny_http = "0.12.0"
 base64 = "0.21.2"
 html_editor = "0.6.1"
+tracing = "0.1.37"
+notify = "6.0.1"
+
+# Zola
+site = { git = "https://github.com/getzola/zola", branch = "master" }
+errors = { git = "https://github.com/getzola/zola", branch = "master" }
+console = { git = "https://github.com/getzola/zola", branch = "master" }
+utils = { git = "https://github.com/getzola/zola", branch = "master" }
+libs = { git = "https://github.com/getzola/zola", branch = "master" }
 
 [dependencies.tauri]
 version = "1.4.1"

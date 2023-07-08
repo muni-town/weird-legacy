@@ -8,9 +8,10 @@ use tauri::{
 };
 
 use crate::{
+    build::build,
     prelude::*,
-    state::{Content, Link, User, AppState, Links},
-    utils::{self, zip_dir}, generator::generate,
+    state::{AppState, Content, Link, Links, User},
+    utils::{self, write_config, zip_dir},
 };
 
 #[command]
@@ -29,16 +30,21 @@ pub fn toggle_preview_window(handle: AppHandle) -> Result<()> {
 
 #[command]
 pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
-    let template_dir = handle
+    let output_dir = handle
         .path_resolver()
-        .app_local_data_dir()
+        .app_cache_dir()
         .unwrap()
-        .join("template/");
+        .join("dist/");
     let zip_file = handle
         .path_resolver()
         .app_cache_dir()
         .unwrap()
         .join("website.zip");
+    let config_path = handle
+        .path_resolver()
+        .app_local_data_dir()
+        .unwrap()
+        .join("template/config.toml");
 
     let user: &User = &state.user.lock().unwrap();
     let links: Links = state.links.lock().unwrap().to_vec();
@@ -52,17 +58,28 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
 
     to_writer(links_file, &links)?;
 
-    generate(
+    write_config(
         Content {
             user: user.clone(),
             links,
         },
-        &handle,
+        &config_path,
+    );
+
+    build(
+        &handle
+            .path_resolver()
+            .app_local_data_dir()
+            .unwrap()
+            .join("template/"),
+        &config_path,
+        &output_dir,
+        Some("/"),
     )?;
 
     // zip the website bundle.
     zip_dir(
-        template_dir.to_str().unwrap(),
+        output_dir.to_str().unwrap(),
         zip_file.to_str().unwrap(),
         zip::CompressionMethod::Deflated,
     )?;
