@@ -15,7 +15,7 @@ pub type Links = Vec<Link>;
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize, TS)]
 #[ts(export, export_to = "../src/bindings/")]
-pub struct User {
+pub struct Profile {
     pub name: String,
     pub username: String,
     pub title: String,
@@ -26,13 +26,13 @@ pub struct User {
 /// Contains data used to generate the final `index.html` file.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Content {
-    pub user: User,
+    pub profile: Profile,
     pub links: Links,
 }
 
 /// contains the app global state
 #[derive(Debug, Default)]
 pub struct AppState {
-    pub user: Mutex<User>,
+    pub profile: Mutex<Profile>,
     pub links: Mutex<Links>,
 }

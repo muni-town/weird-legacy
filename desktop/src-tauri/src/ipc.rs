@@ -9,7 +9,7 @@ use tauri::{
 
 use crate::{
     prelude::*,
-    state::{Content, Link, User, AppState, Links},
+    state::{Content, Link, Profile, AppState, Links},
     utils::{self, zip_dir}, generator::generate,
 };
 
@@ -40,7 +40,7 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .unwrap()
         .join("website.zip");
 
-    let user: &User = &state.user.lock().unwrap();
+    let user: &Profile = &state.profile.lock().unwrap();
     let links: Links = state.links.lock().unwrap().to_vec();
     let links_file = File::create(
         handle
@@ -54,7 +54,7 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
 
     generate(
         Content {
-            user: user.clone(),
+            profile: user.clone(),
             links,
         },
         &handle,
@@ -115,7 +115,7 @@ pub fn add_link(link: Link, state: State<'_, AppState>) -> Result<()> {
 }
 
 #[command]
-pub fn update_user(user: User, state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
+pub fn update_user(user: Profile, state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
     let user_file = File::create(
         handle
             .path_resolver()
@@ -124,20 +124,20 @@ pub fn update_user(user: User, state: State<'_, AppState>, handle: AppHandle) ->
             .join("user.json"),
     )?;
     to_writer(user_file, &user)?;
-    *state.user.lock().unwrap() = user;
+    *state.profile.lock().unwrap() = user;
     Ok(())
 }
 
 #[command]
-pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<User> {
-    let user: User = match utils::load_user(handle) {
+pub fn get_user(state: State<'_, AppState>, handle: AppHandle) -> Result<Profile> {
+    let user: Profile = match utils::load_user(handle) {
         Ok(u) => {
-            *state.user.lock().unwrap() = u.clone();
+            *state.profile.lock().unwrap() = u.clone();
             u
         }
         Err(e) => {
             warn!("Could not load user data: {e}");
-            let user: &User = &state.user.lock().unwrap();
+            let user: &Profile = &state.profile.lock().unwrap();
 
             user.clone()
         }

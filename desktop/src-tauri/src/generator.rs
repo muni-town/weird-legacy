@@ -26,7 +26,7 @@ pub fn generate(content: Content, handle: &AppHandle) -> Result<()> {
 
 /// Update parsed dom with the data in `Content`
 fn update_dom(dom: &mut Vec<Node>, content: &Content) -> Result<()> {
-    if let Some(photo) = content.user.photo.clone() {
+    if let Some(photo) = content.profile.photo.clone() {
         let Some(node) = dom.query_mut(&Selector::from("img#photo")) else {
             return Err(Error::HtmlParse("img#photo not found".to_owned()))
         };
@@ -39,19 +39,19 @@ fn update_dom(dom: &mut Vec<Node>, content: &Content) -> Result<()> {
     let Some(mut node) = dom.query_mut(&Selector::from("div#name")) else {
         return Err(Error::HtmlParse("div#name not found".to_owned()))
     };
-    node.children = vec![Node::Text(content.user.name.clone())];
+    node.children = vec![Node::Text(content.profile.name.clone())];
     let Some(mut node) = dom.query_mut(&Selector::from("div#username")) else {
         return Err(Error::HtmlParse("div#username not found".to_owned()))
     };
-    node.children = vec![Node::Text(content.user.username.clone())];
+    node.children = vec![Node::Text(content.profile.username.clone())];
     let Some(mut node) = dom.query_mut(&Selector::from("div#title")) else {
         return Err(Error::HtmlParse("div#title not found".to_owned()))
     };
-    node.children = vec![Node::Text(content.user.title.clone())];
+    node.children = vec![Node::Text(content.profile.title.clone())];
     let Some(mut node) = dom.query_mut(&Selector::from("div#about")) else {
         return Err(Error::HtmlParse("div#about not found".to_owned()))
     };
-    node.children = vec![Node::Text(content.user.about.clone())];
+    node.children = vec![Node::Text(content.profile.about.clone())];
 
     let Some(mut links_node) = dom.query_mut(&Selector::from("div#links")) else {
         return Err(Error::HtmlParse("div#links not found".to_owned()))
