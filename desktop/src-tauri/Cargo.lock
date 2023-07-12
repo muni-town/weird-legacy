@@ -3655,7 +3655,7 @@ dependencies = [
 
 [[package]]
 name = "weird"
-version = "0.2.2"
+version = "0.2.3"
 dependencies = [
  "base64 0.21.2",
  "html_editor",

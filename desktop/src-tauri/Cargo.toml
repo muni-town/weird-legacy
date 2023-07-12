@@ -1,6 +1,6 @@
 [package]
 name = "weird"
-version = "0.2.2"
+version = "0.2.3"
 description = "Local-first website generator."
 authors = ["Noah Too <krivahtoo@gmail.com>"]
 license = "MIT"
