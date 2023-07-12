@@ -31,7 +31,7 @@ fn update_dom(dom: &mut Vec<Node>, content: &Content) -> Result<()> {
             return Err(Error::HtmlParse("img#photo not found".to_owned()))
         };
         node.attrs.iter_mut().for_each(|attr| {
-            if attr.0.as_str() == "href" {
+            if attr.0.as_str() == "src" {
                 attr.1 = photo.clone()
             }
         });

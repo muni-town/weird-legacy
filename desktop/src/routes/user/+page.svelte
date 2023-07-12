@@ -35,6 +35,12 @@
       class="text-white bg-gray-700 rounded p-2"
       placeholder="Enter you title.."
     />
+    <input
+      type="url"
+      bind:value={$user.photo}
+      class="text-white bg-gray-700 rounded p-2"
+      placeholder="Enter url to your avatar.."
+    />
     <textarea
       cols="20"
       rows="4"
