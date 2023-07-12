@@ -7,7 +7,7 @@
     "distDir": "../dist",
     "devPath": "http://localhost:5173",
     "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build && pnpm -C template run build"
+    "beforeBuildCommand": "pnpm build"
   },
   "tauri": {
     "bundle": {

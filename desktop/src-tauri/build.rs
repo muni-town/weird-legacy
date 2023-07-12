@@ -10,7 +10,7 @@ fn main() {
 
 fn generate_zip() {
     let path = Path::new(file!()).parent().unwrap();
-    let src_dir = path.join("../template/build").to_str().unwrap().to_owned();
+    let src_dir = path.join("../template").to_str().unwrap().to_owned();
     let dst_file = path
         .join("./assets/template.zip")
         .to_str()
