@@ -11,13 +11,13 @@ use tauri::AppHandle;
 
 use crate::{
     prelude::*,
-    state::{User, Links, Content},
+    state::{Profile, Links, Content},
 };
 
 pub mod zip;
 
 /// Load saved user info if available
-pub fn load_user(handle: AppHandle) -> Result<User> {
+pub fn load_user(handle: AppHandle) -> Result<Profile> {
     let user_file = handle
         .path_resolver()
         .app_config_dir()

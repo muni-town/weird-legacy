@@ -4,11 +4,11 @@
   import { user, links, link_id } from '../store'
   import { invoke } from '@tauri-apps/api/tauri'
   import type { Link } from '../bindings/Link'
-  import type { User } from '../bindings/User'
+  import type { Profile } from '../bindings/Profile'
 
   onMount(() => {
     invoke('get_user')
-      .then((u: User) => user.set(u))
+      .then((u: Profile) => user.set(u))
       .catch((e) => console.error(e))
     invoke('get_links')
       .then((l: Array<Link>) => {

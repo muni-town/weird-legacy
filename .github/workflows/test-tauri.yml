@@ -39,7 +39,6 @@ jobs:
       - name: install frontend dependencies and build
         run: |
           pnpm install
-          pnpm -C template install && pnpm -C template run build
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

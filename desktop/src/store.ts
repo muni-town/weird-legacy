@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store'
-import type { User } from './bindings/User'
+import type { Profile } from './bindings/Profile'
 import type { Link } from './bindings/Link'
 
-export const user = writable<User>()
+export const user = writable<Profile>()
 
 export const links = writable<Link[]>([])
 
