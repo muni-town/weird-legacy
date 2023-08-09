@@ -1,6 +1,6 @@
 use libs::percent_encoding;
 use libs::relative_path::RelativePathBuf;
-use log::{debug, error};
+use log::{debug, error, warn};
 use mime_guess::from_path;
 use site::{Site, SITE_CONTENT};
 use std::io::Cursor;
@@ -181,6 +181,10 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
 
     let cache_path = app.path_resolver().app_cache_dir().unwrap().join("dist/");
     fs::create_dir_all(&cache_path).expect("fixme");
+    let config_file = app.path_resolver()
+            .app_local_data_dir()
+            .unwrap()
+            .join("template/config.toml");
     create_new_site(
         &app.path_resolver()
             .app_local_data_dir()
@@ -189,10 +193,7 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
         7878,
         &cache_path,
         "/",
-        &app.path_resolver()
-            .app_local_data_dir()
-            .unwrap()
-            .join("template/config.toml"),
+        &config_file,
         Some(7879),
     ).expect("could not build zola site");
 
@@ -213,7 +214,7 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
                     }
                 };
             }
-            Err(e) => error!("{e}"),
+            Err(e) => warn!("{e}"),
         }
     });
 }

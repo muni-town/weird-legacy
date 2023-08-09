@@ -6,11 +6,12 @@ use tauri::{
     api::{dialog::FileDialogBuilder, path::download_dir},
     command, AppHandle, Manager, State,
 };
+use toml::Value;
 
 use crate::{
     build::build,
     prelude::*,
-    state::{Content, Link, Profile, AppState, Links},
+    state::{Link, Profile, AppState, Links},
     utils::{self, write_config, zip_dir},
 };
 
@@ -42,9 +43,9 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .join("website.zip");
     let config_path = handle
         .path_resolver()
-        .app_local_data_dir()
+        .app_cache_dir()
         .unwrap()
-        .join("template/config.toml");
+        .join("config.toml");
 
     let user: &Profile = &state.profile.lock().unwrap();
     let links: Links = state.links.lock().unwrap().to_vec();
@@ -55,16 +56,22 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
             .unwrap()
             .join("links.json"),
     )?;
+    let org_config_file = handle
+        .path_resolver()
+        .app_local_data_dir()
+        .unwrap()
+        .join("template/config.toml");
+    let mut config = config::get_config(&org_config_file)?;
+    config.extra.insert("profile".into(), user.to_value());
+    let links_val: W<Value> = (&links).into();
+    config.extra.insert("links".into(), links_val.0);
 
     to_writer(links_file, &links)?;
 
     write_config(
-        Content {
-            profile: user.clone(),
-            links,
-        },
+        config,
         &config_path,
-    );
+    )?;
 
     build(
         &handle

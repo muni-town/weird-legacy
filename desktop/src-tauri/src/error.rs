@@ -9,7 +9,11 @@ pub enum Error {
     #[error(transparent)]
     Io(#[from] std::io::Error),
     #[error(transparent)]
-    Zola(#[from] errors::Error)
+    Zola(#[from] errors::Error),
+    #[error(transparent)]
+    Toml(#[from] toml::ser::Error),
+    #[error(transparent)]
+    Notify(#[from] notify::Error),
 }
 
 impl serde::Serialize for Error {

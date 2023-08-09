@@ -11,7 +11,7 @@ use tauri::AppHandle;
 
 use crate::{
     prelude::*,
-    state::{Profile, Links, Content},
+    state::{Profile, Links},
 };
 
 pub mod zip;
@@ -43,7 +43,10 @@ pub fn load_links(handle: AppHandle) -> Result<Links> {
 }
 
 /// Write user profile and links to config.toml
-pub fn write_config(content: Content, path: &PathBuf) {
+pub fn write_config(config: config::Config, path: &PathBuf) -> Result<()> {
+    let toml = toml::to_string(&config.serialize("en"))?;
+    fs::write(path, toml)?;
+    Ok(())
 }
 
 pub fn extract_template(filepath: PathBuf, dest: &Path) {
