@@ -1,5 +1,5 @@
 name: 'test'
-on: 
+on:
   pull_request:
   push:
     branches:
@@ -39,6 +39,10 @@ jobs:
       - name: install frontend dependencies and build
         run: |
           pnpm install
+      - name: Fix git issue (Windows)
+        if: matrix.platform == 'windows-latest'
+        run: |
+          git config --global core.protectNTFS false
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
