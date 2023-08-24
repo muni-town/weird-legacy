@@ -7,6 +7,7 @@ use ipc::{
     add_link, export_zip, generate_site, get_export_zip_base64, get_links, get_user, remove_link,
     toggle_preview_window, update_user,
 };
+#[cfg(debug_assertions)]
 use tracing::Level;
 use server::start_server;
 use state::AppState;
@@ -27,13 +28,10 @@ mod utils;
 
 fn main() {
     #[cfg(not(debug_assertions))]
-    {
-        tracing_subscriber::fmt().init();
-    }
+    tracing_subscriber::fmt().init();
     #[cfg(debug_assertions)]
-    {
-        tracing_subscriber::fmt().with_max_level(Level::DEBUG).init();
-    }
+    tracing_subscriber::fmt().with_max_level(Level::DEBUG).init();
+
     let exit = Mutex::new(false);
 
     let (tx, rx) = sync_channel(1);

@@ -180,7 +180,7 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
     });
 
     let cache_path = app.path_resolver().app_cache_dir().unwrap().join("dist/");
-    fs::create_dir_all(&cache_path).expect("fixme");
+    fs::create_dir_all(&cache_path).expect("could not create cache path");
     let config_file = app.path_resolver()
             .app_local_data_dir()
             .unwrap()

@@ -3,7 +3,7 @@ use std::fs::File;
 use log::{debug, warn};
 use serde_json::to_writer;
 use tauri::{
-    api::{dialog::FileDialogBuilder, path::download_dir},
+    api::{dialog::FileDialogBuilder, path::home_dir},
     command, AppHandle, Manager, State,
 };
 use toml::Value;
@@ -116,7 +116,7 @@ pub fn export_zip(handle: AppHandle) -> Result<()> {
         .join("website.zip");
     FileDialogBuilder::new()
         .set_file_name("website.zip")
-        .set_directory(download_dir().unwrap())
+        .set_directory(home_dir().unwrap())
         .save_file(move |f| {
             if let Some(file) = f {
                 debug!("Saving website bundle to {}", file.to_str().unwrap());
