@@ -1,0 +1,3 @@
+[submodule "desktop/zola"]
+	path = desktop/zola
+	url = git@github.com:getzola/zola.git

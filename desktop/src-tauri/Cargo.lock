@@ -501,7 +501,6 @@ dependencies = [
 [[package]]
 name = "config"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "errors",
  "libs",
@@ -512,7 +511,6 @@ dependencies = [
 [[package]]
 name = "console"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "errors",
  "libs",
@@ -521,7 +519,6 @@ dependencies = [
 [[package]]
 name = "content"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "errors",
@@ -946,7 +943,6 @@ dependencies = [
 [[package]]
 name = "errors"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "anyhow",
 ]
@@ -1815,7 +1811,6 @@ dependencies = [
 [[package]]
 name = "imageproc"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "errors",
@@ -2088,7 +2083,6 @@ checksum = "2b00cc1c228a6782d0f076e7b232802e0c5689d41bb5df366f2a6b6621cfdfe1"
 [[package]]
 name = "libs"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "ahash 0.8.3",
  "ammonia",
@@ -2152,7 +2146,6 @@ dependencies = [
 [[package]]
 name = "link_checker"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "errors",
@@ -2227,7 +2220,6 @@ checksum = "3e2e65a1a2e43cfcb47a895c4c8b10d1f4a61097f9f254f183aee60cad9c651d"
 [[package]]
 name = "markdown"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "console",
@@ -3621,7 +3613,6 @@ dependencies = [
 [[package]]
 name = "search"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "content",
@@ -3853,7 +3844,6 @@ checksum = "7bd3e3206899af3f8b12af284fafc038cc1dc2b41d1b89dd17297221c5d225de"
 [[package]]
 name = "site"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "console",
@@ -4372,7 +4362,6 @@ dependencies = [
 [[package]]
 name = "templates"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "config",
  "content",
@@ -4884,7 +4873,6 @@ checksum = "09cc8ee72d2a9becf2f2febe0205bbed8fc6615b7cb429ad062dc7b7ddd036a9"
 [[package]]
 name = "utils"
 version = "0.1.0"
-source = "git+https://github.com/getzola/zola?branch=master#8dd1b30594dcfa5344ba36b6b057a5b0aa9bd277"
 dependencies = [
  "errors",
  "libs",
