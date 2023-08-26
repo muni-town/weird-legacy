@@ -3,7 +3,10 @@ use std::fs::File;
 use log::{debug, warn};
 use serde_json::to_writer;
 use tauri::{
-    api::{dialog::FileDialogBuilder, path::home_dir},
+    api::{
+        dialog::FileDialogBuilder,
+        path::home_dir,
+    },
     command, AppHandle, Manager, State,
 };
 use toml::Value;
@@ -11,7 +14,7 @@ use toml::Value;
 use crate::{
     build::build,
     prelude::*,
-    state::{Link, Profile, AppState, Links},
+    state::{AppState, Config, Link, Links, Profile},
     utils::{self, write_config, zip_dir},
 };
 
@@ -46,6 +49,14 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         .app_cache_dir()
         .unwrap()
         .join("config.toml");
+    let template_path = match state.config.lock().unwrap().template_path.clone() {
+        Some(p) => p,
+        None => handle
+            .path_resolver()
+            .app_local_data_dir()
+            .unwrap()
+            .join("template/"),
+    };
 
     let user: &Profile = &state.profile.lock().unwrap();
     let links: Links = state.links.lock().unwrap().to_vec();
@@ -56,11 +67,7 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
             .unwrap()
             .join("links.json"),
     )?;
-    let org_config_file = handle
-        .path_resolver()
-        .app_local_data_dir()
-        .unwrap()
-        .join("template/config.toml");
+    let org_config_file = template_path.join("config.toml");
     let mut config = config::get_config(&org_config_file)?;
     config.extra.insert("profile".into(), user.to_value());
     let links_val: W<Value> = (&links).into();
@@ -68,21 +75,11 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
 
     to_writer(links_file, &links)?;
 
-    write_config(
-        config,
-        &config_path,
-    )?;
+    // write to a temporary config.toml
+    write_config(config, &config_path)?;
 
-    build(
-        &handle
-            .path_resolver()
-            .app_local_data_dir()
-            .unwrap()
-            .join("template/"),
-        &config_path,
-        &output_dir,
-        Some("/"),
-    )?;
+    // build Zola site with temp config
+    // build(&template_path, &config_path, &output_dir, None)?;
 
     // zip the website bundle.
     zip_dir(
@@ -91,6 +88,38 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
         zip::CompressionMethod::Deflated,
     )?;
 
+    Ok(())
+}
+
+/// Set template path
+#[command]
+pub fn set_template_path(state: State<'_, AppState>, handle: AppHandle) -> Result<()> {
+    let template_path = match state.config.lock().unwrap().template_path.clone() {
+        Some(p) => p,
+        None => handle
+            .path_resolver()
+            .app_local_data_dir()
+            .unwrap()
+            .join("template/"),
+    };
+    FileDialogBuilder::new()
+        .set_directory(template_path)
+        .pick_folder(move |path| {
+            if path.is_some() {
+                let config_file = File::create(
+                    handle
+                        .path_resolver()
+                        .app_config_dir()
+                        .unwrap()
+                        .join("config.json"),
+                ).expect("could not create or open file");
+                let config = Config {
+                    template_path: path.clone(),
+                };
+                debug!("writing template path {:?} to config", path.unwrap());
+                to_writer(config_file, &config).expect("could not write to file");
+            }
+        });
     Ok(())
 }
 

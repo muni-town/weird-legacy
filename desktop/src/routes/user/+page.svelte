@@ -6,6 +6,10 @@
   function updateUser() {
     invoke('update_user', { user: $user }).then(() => goto('/'))
   }
+
+  function setTemplatePath() {
+    invoke('set_template_path')
+  }
 </script>
 
 <div class="absolute top-0 w-full transition h-full bg-gray-800 z-10">
@@ -49,5 +53,6 @@
       class="text-white bg-gray-700 rounded p-2"
     />
     <button class="btn btn-primary" type="submit"> Save </button>
+    <button class="btn" on:click={setTemplatePath}> Set template path </button>
   </form>
 </div>

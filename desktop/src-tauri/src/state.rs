@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::{sync::Mutex, path::PathBuf};
 
 use serde::{Deserialize, Serialize};
 use toml::{Table, Value, value::Array};
@@ -71,9 +71,16 @@ pub struct Content {
     pub links: Links,
 }
 
+/// contains app configurations
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Config {
+    pub template_path: Option<PathBuf>,
+}
+
 /// contains the app global state
 #[derive(Debug, Default)]
 pub struct AppState {
     pub profile: Mutex<Profile>,
     pub links: Mutex<Links>,
+    pub config: Mutex<Config>,
 }

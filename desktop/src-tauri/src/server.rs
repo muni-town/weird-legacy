@@ -2,8 +2,11 @@ use libs::percent_encoding;
 use libs::relative_path::RelativePathBuf;
 use log::{debug, error, warn};
 use mime_guess::from_path;
+use serde_json::from_reader;
 use site::{Site, SITE_CONTENT};
-use std::io::Cursor;
+use tauri::api::path::config_dir;
+use std::fs::File;
+use std::io::{Cursor, BufReader};
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
 use std::{fs, thread};
@@ -11,6 +14,7 @@ use std::{sync::mpsc::Receiver, sync::Arc};
 use tiny_http::{Header, Method, Request, Response, Server};
 
 use crate::prelude::*;
+use crate::state::Config;
 
 // This is dist/livereload.min.js from the LiveReload.js v3.2.4 release
 const LIVE_RELOAD: &str = include_str!("livereload.js");
@@ -49,6 +53,10 @@ fn create_new_site(
     } else {
         site.enable_live_reload(port);
     }
+    debug!(
+        "Building zola site output path: {}",
+        output_dir.to_str().unwrap_or_default()
+    );
     site.build()?;
     Ok((site, address))
 }
@@ -180,22 +188,28 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
     });
 
     let cache_path = app.path_resolver().app_cache_dir().unwrap().join("dist/");
-    fs::create_dir_all(&cache_path).expect("could not create cache path");
-    let config_file = app.path_resolver()
-            .app_local_data_dir()
-            .unwrap()
-            .join("template/config.toml");
-    create_new_site(
-        &app.path_resolver()
+    let config: Config = crate::utils::get_config().unwrap_or_default();
+    let template_path = match config.template_path {
+        Some(p) => p,
+        None => app
+            .path_resolver()
             .app_local_data_dir()
             .unwrap()
             .join("template/"),
+    };
+    debug!("template path {}", template_path.to_str().unwrap());
+    fs::create_dir_all(&cache_path).expect("could not create cache path");
+    let config_file = template_path
+        .join("config.toml");
+    create_new_site(
+        &template_path,
         7878,
         &cache_path,
-        "/",
+        "localhost",
         &config_file,
         Some(7879),
-    ).expect("could not build zola site");
+    )
+    .expect("could not build zola site");
 
     let cache = cache_path.to_str().unwrap().to_owned();
 
