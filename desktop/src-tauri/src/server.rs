@@ -1,34 +1,156 @@
-use log::{debug, error};
+use libs::percent_encoding;
+use libs::relative_path::RelativePathBuf;
+use log::{debug, error, warn};
 use mime_guess::from_path;
+use serde_json::from_reader;
+use site::{Site, SITE_CONTENT};
+use tauri::api::path::config_dir;
+use std::fs::File;
+use std::io::{Cursor, BufReader};
 use std::net::SocketAddr;
-use std::path::PathBuf;
-use std::thread;
-use std::{fs::File, sync::mpsc::Receiver, sync::Arc};
-use tiny_http::{Header, Request, Response, Server};
+use std::path::{Path, PathBuf};
+use std::{fs, thread};
+use std::{sync::mpsc::Receiver, sync::Arc};
+use tiny_http::{Header, Method, Request, Response, Server};
 
 use crate::prelude::*;
+use crate::state::Config;
 
-fn serve_static_file(req: Request, path: PathBuf) -> Result<()> {
-    // map uri path to file path
-    let mut path = path.join(req.url().splitn(2, '/').collect::<Vec<&str>>()[1]);
+// This is dist/livereload.min.js from the LiveReload.js v3.2.4 release
+const LIVE_RELOAD: &str = include_str!("livereload.js");
 
-    // server the index.html file for directory
-    if path.is_dir() {
-        path.push("index.html");
-    }
-    debug!("serving file path: {}", path.to_str().unwrap());
+fn create_new_site(
+    root_dir: &Path,
+    port: u16,
+    output_dir: &PathBuf,
+    base_url: &str,
+    config_file: &Path,
+    ws_port: Option<u16>,
+) -> Result<(Site, String)> {
+    SITE_CONTENT.write().unwrap().clear();
 
-    let res = match File::open(&path) {
-        Ok(file) => Response::from_file(file),
-        Err(_) => {
-            // return 404 Not Found if the file doesn't exist
-            req.respond(Response::from_string("Not Found").with_status_code(404))?;
-            return Ok(());
+    let mut site = Site::new(root_dir, config_file)?;
+    let address = format!("localhost:{}", port);
+
+    let base_url = if base_url == "/" {
+        String::from("/")
+    } else {
+        let base_address = format!("{}:{}", base_url, port);
+
+        if site.config.base_url.ends_with('/') {
+            format!("http://{}/", base_address)
+        } else {
+            format!("http://{}", base_address)
         }
     };
 
-    let mime_type = from_path(&path).first_or_octet_stream();
-    let mut res = res.with_status_code(200);
+    site.enable_serve_mode();
+    site.set_base_url(base_url);
+    site.set_output_path(output_dir);
+    site.load()?;
+    if let Some(p) = ws_port {
+        site.enable_live_reload_with_port(p);
+    } else {
+        site.enable_live_reload(port);
+    }
+    debug!(
+        "Building zola site output path: {}",
+        output_dir.to_str().unwrap_or_default()
+    );
+    site.build()?;
+    Ok((site, address))
+}
+
+fn not_found() -> Response<Cursor<Vec<u8>>> {
+    Response::from_string("Not Found").with_status_code(404)
+}
+
+fn method_not_allowed() -> Response<Cursor<Vec<u8>>> {
+    Response::from_string("Method Not Allowed").with_status_code(405)
+}
+
+fn livereload_js() -> Response<Cursor<Vec<u8>>> {
+    let mut res = Response::from_string(LIVE_RELOAD).with_status_code(200);
+    res.add_header(Header::from_bytes(&b"Content-Type"[..], &b"text/javascript"[..]).unwrap());
+    res
+}
+
+fn io_error(err: std::io::Error) -> Response<Cursor<Vec<u8>>> {
+    match err.kind() {
+        std::io::ErrorKind::NotFound => not_found(),
+        std::io::ErrorKind::PermissionDenied => {
+            Response::from_string("Forbidden").with_status_code(403)
+        }
+        _ => panic!("{}", err),
+    }
+}
+
+fn in_memory_content(path: &RelativePathBuf, content: &str) -> Response<Cursor<Vec<u8>>> {
+    let content_type = match path.extension() {
+        Some(ext) => match ext {
+            "xml" => "text/xml",
+            "json" => "application/json",
+            _ => "text/html",
+        },
+        None => "text/html",
+    };
+    let mut res = Response::from_string(content).with_status_code(200);
+    res.add_header(Header::from_bytes(&b"Content-Type"[..], content_type).unwrap());
+    res
+}
+
+fn serve_static_file(req: &Request, mut root: PathBuf) -> Result<Response<Cursor<Vec<u8>>>> {
+    // map uri path to file path
+    let original_root = root.clone();
+    let mut path = RelativePathBuf::new();
+
+    debug!("{} {}", req.method().as_str(), req.url());
+
+    let decoded = match percent_encoding::percent_decode_str(req.url()).decode_utf8() {
+        Ok(d) => d,
+        Err(_) => return Ok(not_found()),
+    };
+    for c in decoded.split('/') {
+        path.push(c);
+    }
+
+    // livereload.js is served using the LIVE_RELOAD str, not a file
+    if path == "livereload.js" {
+        match req.method() {
+            Method::Get => return Ok(livereload_js()),
+            _ => return Ok(method_not_allowed()),
+        }
+    }
+
+    if let Some(content) = SITE_CONTENT.read().unwrap().get(&path) {
+        return Ok(in_memory_content(&path, content));
+    }
+    // Remove the first slash from the request path
+    root.push(&decoded[1..]);
+
+    // Ensure we are only looking for things in our public folder
+    if !root.starts_with(original_root) {
+        return Ok(not_found());
+    }
+
+    let metadata = match std::fs::metadata(root.as_path()) {
+        Err(err) => return Ok(io_error(err)),
+        Ok(metadata) => metadata,
+    };
+    if metadata.is_dir() {
+        // if root is a directory, append index.html to try to read that instead
+        root.push("index.html");
+    };
+
+    let result = std::fs::read(&root);
+
+    let contents = match result {
+        Err(err) => return Ok(io_error(err)),
+        Ok(contents) => contents,
+    };
+
+    let mut res = Response::from_data(contents).with_status_code(200);
+    let mime_type = from_path(&root).first_or_octet_stream();
     res.add_header(
         Header::from_bytes(
             &b"Content-Type"[..],
@@ -36,20 +158,11 @@ fn serve_static_file(req: Request, path: PathBuf) -> Result<()> {
         )
         .unwrap(),
     );
-    req.respond(res)?;
-    Ok(())
+    Ok(res)
 }
 
 pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
     let addr: SocketAddr = ([127, 0, 0, 1], 7878).into();
-    let path = app
-        .path_resolver()
-        .app_local_data_dir()
-        .unwrap()
-        .join("template/")
-        .to_str()
-        .unwrap()
-        .to_owned();
 
     let server = Arc::new(Server::http(addr).unwrap());
 
@@ -74,15 +187,48 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
         }
     });
 
+    let cache_path = app.path_resolver().app_cache_dir().unwrap().join("dist/");
+    let config: Config = crate::utils::get_config().unwrap_or_default();
+    let template_path = match config.template_path {
+        Some(p) => p,
+        None => app
+            .path_resolver()
+            .app_local_data_dir()
+            .unwrap()
+            .join("template/"),
+    };
+    debug!("template path {}", template_path.to_str().unwrap());
+    fs::create_dir_all(&cache_path).expect("could not create cache path");
+    let config_file = template_path
+        .join("config.toml");
+    create_new_site(
+        &template_path,
+        7878,
+        &cache_path,
+        "localhost",
+        &config_file,
+        Some(7879),
+    )
+    .expect("could not build zola site");
+
+    let cache = cache_path.to_str().unwrap().to_owned();
+
     // Spawn a thread to run the http server.
     thread::spawn(move || loop {
         match server.recv() {
             Ok(rq) => {
-                if let Err(e) = serve_static_file(rq, PathBuf::from(&path)) {
-                    error!("Request failed: {e}");
+                match serve_static_file(&rq, PathBuf::from(&cache)) {
+                    Err(e) => {
+                        error!("Request failed: {e}");
+                    }
+                    Ok(res) => {
+                        if let Err(e) = rq.respond(res) {
+                            error!("Sending response failed: {e}");
+                        };
+                    }
                 };
             }
-            Err(e) => error!("{e}"),
+            Err(e) => warn!("{e}"),
         }
     });
 }

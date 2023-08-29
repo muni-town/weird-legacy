@@ -7,11 +7,11 @@ use std::{
     io::{self, BufReader},
     path::{Path, PathBuf},
 };
-use tauri::AppHandle;
+use tauri::{AppHandle, api::path::config_dir};
 
 use crate::{
     prelude::*,
-    state::{Profile, Links},
+    state::{Profile, Links, Config},
 };
 
 pub mod zip;
@@ -40,6 +40,13 @@ pub fn load_links(handle: AppHandle) -> Result<Links> {
     let reader = BufReader::new(file);
     let links: Links = from_reader(reader)?;
     Ok(links)
+}
+
+/// Write user profile and links to config.toml
+pub fn write_config(config: config::Config, path: &PathBuf) -> Result<()> {
+    let toml = toml::to_string(&config.serialize("en"))?;
+    fs::write(path, toml)?;
+    Ok(())
 }
 
 pub fn extract_template(filepath: PathBuf, dest: &Path) {
@@ -83,4 +90,13 @@ pub fn extract_template(filepath: PathBuf, dest: &Path) {
             }
         }
     }
+}
+
+pub fn get_config() -> Result<Config>  {
+    let config_file = config_dir().unwrap().join("weird/config.json");
+    debug!("config path {}", config_file.to_str().unwrap());
+    let file = File::open(config_file)?;
+    let reader = BufReader::new(file);
+    let config = from_reader(reader)?;
+    Ok(config)
 }

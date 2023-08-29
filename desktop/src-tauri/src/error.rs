@@ -8,8 +8,12 @@ pub enum Error {
     Zip(#[from] zip::result::ZipError),
     #[error(transparent)]
     Io(#[from] std::io::Error),
-    #[error("html parse failed {0}")]
-    HtmlParse(String),
+    #[error(transparent)]
+    Zola(#[from] errors::Error),
+    #[error(transparent)]
+    Toml(#[from] toml::ser::Error),
+    #[error(transparent)]
+    Notify(#[from] notify::Error),
 }
 
 impl serde::Serialize for Error {

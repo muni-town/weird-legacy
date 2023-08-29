@@ -5,28 +5,42 @@
 
 use ipc::{
     add_link, export_zip, generate_site, get_export_zip_base64, get_links, get_user, remove_link,
-    toggle_preview_window, update_user,
+    set_template_path, toggle_preview_window, update_user,
 };
+use prelude::*;
 use server::start_server;
-use state::AppState;
+use state::{AppState, Config};
 use std::{
     fs,
     path::PathBuf,
     sync::{mpsc::sync_channel, Mutex},
 };
 use tauri::{Manager, WindowEvent};
+#[cfg(debug_assertions)]
+use tracing::Level;
 
+mod build;
 mod error;
 mod ipc;
 mod prelude;
 mod server;
 mod state;
 mod utils;
-mod generator;
 
 fn main() {
+    #[cfg(not(debug_assertions))]
     tracing_subscriber::fmt().init();
+    #[cfg(debug_assertions)]
+    tracing_subscriber::fmt()
+        .with_max_level(Level::DEBUG)
+        .init();
+
     let exit = Mutex::new(false);
+    let config: Result<Config> = utils::get_config();
+    let state = AppState {
+        config: Mutex::new(config.unwrap_or_default()),
+        ..Default::default()
+    };
 
     let (tx, rx) = sync_channel(1);
     tauri::Builder::default()
@@ -80,7 +94,7 @@ fn main() {
             }
             Ok(())
         })
-        .manage(AppState::default())
+        .manage(state)
         .invoke_handler(tauri::generate_handler![
             toggle_preview_window,
             generate_site,
@@ -90,7 +104,8 @@ fn main() {
             add_link,
             update_user,
             get_user,
-            get_links
+            get_links,
+            set_template_path,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
