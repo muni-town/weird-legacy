@@ -4,13 +4,14 @@ use log::{debug, error, warn};
 use mime_guess::from_path;
 use serde_json::from_reader;
 use site::{Site, SITE_CONTENT};
-use tauri::api::path::config_dir;
 use std::fs::File;
-use std::io::{Cursor, BufReader};
+use std::io::{BufReader, Cursor};
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
+use std::sync::mpsc;
 use std::{fs, thread};
 use std::{sync::mpsc::Receiver, sync::Arc};
+use tauri::api::path::config_dir;
 use tiny_http::{Header, Method, Request, Response, Server};
 
 use crate::prelude::*;
@@ -161,7 +162,7 @@ fn serve_static_file(req: &Request, mut root: PathBuf) -> Result<Response<Cursor
     Ok(res)
 }
 
-pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
+pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) -> Result<()> {
     let addr: SocketAddr = ([127, 0, 0, 1], 7878).into();
 
     let server = Arc::new(Server::http(addr).unwrap());
@@ -198,9 +199,8 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
             .join("template/"),
     };
     debug!("template path {}", template_path.to_str().unwrap());
-    fs::create_dir_all(&cache_path).expect("could not create cache path");
-    let config_file = template_path
-        .join("config.toml");
+    fs::create_dir_all(&cache_path)?;
+    let config_file = template_path.join("config.toml");
     create_new_site(
         &template_path,
         7878,
@@ -231,4 +231,6 @@ pub fn start_server(receiver: Receiver<i32>, app: &mut tauri::App) {
             Err(e) => warn!("{e}"),
         }
     });
+
+    Ok(())
 }

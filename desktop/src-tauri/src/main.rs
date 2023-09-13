@@ -16,6 +16,7 @@ use std::{
     sync::{mpsc::sync_channel, Mutex},
 };
 use tauri::{Manager, WindowEvent};
+use log::error;
 #[cfg(debug_assertions)]
 use tracing::Level;
 
@@ -78,7 +79,9 @@ fn main() {
                 fs::create_dir_all(&target_dir).expect("error creating template directory");
                 utils::extract_template(filepath, &target_dir);
             }
-            start_server(rx, app);
+            if let Err(e) = start_server(rx, app) {
+                error!("could not start preview server: {e}");
+            };
             // create the preview window
             tauri::WindowBuilder::new(
                 app,

@@ -12,7 +12,7 @@ use tauri::{
 use toml::Value;
 
 use crate::{
-    build::build,
+    build::{build, create_new_site},
     prelude::*,
     state::{AppState, Config, Link, Links, Profile},
     utils::{self, write_config, zip_dir},
@@ -79,7 +79,18 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
     write_config(config, &config_path)?;
 
     // build Zola site with temp config
-    // build(&template_path, &config_path, &output_dir, None)?;
+    // NOTE: using this some how does not build css files
+    // build(&template_path, &config_path, &output_dir, Some(""))?;
+
+    // this does work
+    create_new_site(
+        &template_path,
+        7878,
+        &output_dir,
+        "localhost",
+        &config_path,
+        None,
+    )?;
 
     // zip the website bundle.
     zip_dir(
