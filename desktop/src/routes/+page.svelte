@@ -34,7 +34,7 @@
         goto('/export')
       })
       .catch((e) => {
-        error = e
+        console.error(e)
       })
       .finally(() => (loading = false))
   }

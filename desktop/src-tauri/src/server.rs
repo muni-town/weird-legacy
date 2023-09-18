@@ -2,16 +2,12 @@ use libs::percent_encoding;
 use libs::relative_path::RelativePathBuf;
 use log::{debug, error, warn};
 use mime_guess::from_path;
-use serde_json::from_reader;
 use site::{Site, SITE_CONTENT};
-use std::fs::File;
-use std::io::{BufReader, Cursor};
+use std::io::Cursor;
 use std::net::SocketAddr;
 use std::path::{Path, PathBuf};
-use std::sync::mpsc;
 use std::{fs, thread};
 use std::{sync::mpsc::Receiver, sync::Arc};
-use tauri::api::path::config_dir;
 use tiny_http::{Header, Method, Request, Response, Server};
 
 use crate::prelude::*;
