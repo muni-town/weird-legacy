@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap");
+
+.about {
+  h1 {
+    font-family: "Bebas Neue", cursive;
+    font-weight: 400;
+  }
+
+  font-weight: 400;
+  padding: 1em;
+
+  @include lg {
+    width: calc(min(120ch, calc(100%) - 64px));
+  }
+
+  .resume-header {
+    padding: 0.25rem 1rem 0.5rem;
+    margin: 0 0 2rem;
+    .resume-content {
+      font-style: italic;
+    }
+    @include lg {
+      padding: 0.5rem 2rem 1rem;
+    }
+  }
+  .content-block {
+    background-color: $darkCard;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+    margin: 2rem 0;
+    border-radius: 0.5rem;
+    padding: 0.25rem 1rem 0.5rem;
+
+    h2 {
+      font-weight: 500;
+      color: $darkScnd;
+
+      a {
+        color: $darkScnd;
+
+        &:hover {
+          color: $darkThrd;
+        }
+      }
+    }
+
+    p {
+      margin: 0.5em 0;
+    }
+  }
+
+  @include lg {
+    padding: 2em;
+    font-size: 1em;
+  }
+
+  ul {
+    list-style: none;
+  }
+
+  li::before {
+    content: "• ";
+    color: $darkScnd;
+  }
+}

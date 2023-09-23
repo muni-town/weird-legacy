@@ -1,29 +1,38 @@
 {% extends "base.html" %}
 
 {% block content %}
-{{ section.content | safe }}
+<div class="homepage">
+  <div class="img-profile-wrapper">
+    <div class="circle"></div>
+    <img src="/{{ config.extra.profile.photo }}" alt="me" width="250" height="250">
+  </div>
+  <div class="content">
 
-{% if config.extra.list_pages %}
+    <div class="content-title">
+      {{ config.extra.profile.name }}
+    </div>
+    <div class="content-subtitle">
+      <span class="font-medium"> {{ config.extra.profile.title }} </span>
+      <span class="font-thin"> {{ config.extra.profile.about }} </span>
+    </div>
 
-{% if paginator %}
-{% set pages = paginator.pages %}
-{% else %}
-{% set pages = section.pages %}
-{% endif %}
+    <div class="">
+      {% for link in config.extra.links %}
+        <div class="font-medium">
+          <a href="{{ link.url }}" target="_blank" rel="noreferrer">
+            {{ link.text }}
+          </a>
+        </div>
+      {% endfor %}
+    </div>
 
-<ul class="titleList">
-{% for page in pages %}
-  <li>
-    <a href="{{ page.permalink | safe }}">{{ page.title }}</a>
-    <br />
-    {{ page.description }}
-  </li>
-{% endfor %}
-</ul>
-
-{% if paginator %}
-<div class="metaData">{% if paginator.previous %}<a href="{{ paginator.first }}">⥶</a> &nbsp <a href="{{ paginator.previous }}"><</a>{% endif %} &nbsp {{ paginator.current_index }} / {{ paginator.number_pagers }} &nbsp {% if paginator.next %}<a href="{{ paginator.next }}">></a> &nbsp <a href="{{ paginator.last }}">⥸</a>{% endif %}</div>
-{% endif %}
-
-{% endif %}
+    <div class="content-icons">
+      {% for link in config.extra.socials %}
+        <a title="{{ link.title }}" href="{{ link.url }}" target="_blank" rel="noreferrer">
+          <i class="{{ link.icon }}"></i>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
 {% endblock content %}

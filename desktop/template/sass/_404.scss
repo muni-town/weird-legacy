@@ -1,0 +1,40 @@
+
+@mixin rotated-text($num-letters: 100, $angle-span: 180deg, $angle-offset: 0deg) {
+  $angle-per-char: $angle-span / $num-letters;
+  @for $i from 1 through $num-letters {
+    .char#{$i} {
+      transform : rotate($angle-offset + $angle-per-char * $i)
+    }
+  }
+}
+
+.error_content {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  h1 {
+    position: relative;
+    @include rotated-text($num-letters: 9, $angle-span: 40deg, $angle-offset: -23deg);
+    span {
+      font: 26px Monaco, MonoSpace;
+      height: 200px;
+      position: absolute;
+      width: 20px;
+      left: 0;
+      top: 0;
+      transform-origin: bottom center;
+    }
+  }
+
+  img {
+    margin: 2rem;
+    width: 10rem;
+
+    @include lg {
+      margin: 3rem;
+      width: 20rem;
+    }
+  }
+}

@@ -1,0 +1,130 @@
+@keyframes skew {
+  0% {
+    transform: skew(0deg) rotate3D(0, 0, 1, 0deg);
+  }
+  25% {
+    transform: skew(6deg) rotate3D(0, 0.1, 1, 90deg);
+  }
+  50% {
+    transform: skew(3deg) rotate3D(0, 0, 1, 190deg);
+  }
+  75% {
+    transform: skew(5deg) rotate3D(0, 0.2, 1, 270deg);
+  }
+  100% {
+    transform: skew(1deg) rotate3D(0, 0, 1, 360deg);
+  }
+}
+
+@keyframes fluid-border {
+  0% {
+    border-radius: 165px 200px 180px 160px;
+  }
+  25% {
+    border-radius: 200px 150px 190px 200px;
+  }
+  50% {
+    border-radius: 190px 200px 100px 186px;
+  }
+  75% {
+    border-radius: 200px 175px 151px 180px;
+  }
+  100% {
+    border-radius: 165px 200px 180px 160px;
+  }
+}
+
+
+.homepage {
+  text-align: center;
+  .img-profile-wrapper {
+    margin: auto;
+    border-radius: 50%;
+    position: relative;
+    width: 270px;
+    height: 270px;
+
+    .circle {
+      filter: drop-shadow(0 0 5px rgba(202,228,225,0.4)) drop-shadow(-5px 0 5px rgba($darkScnd, 0.5)) drop-shadow(5px 0 5px rgba($darkThrd, 0.5));
+      position: absolute;
+      top: 0;
+      left: 0;
+      border-radius: inherit;
+      background: white;
+      width: inherit;
+      height: inherit;
+      animation: fluid-border 4s ease-in-out infinite, skew 6s linear infinite;
+    }
+
+    img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: inherit;
+    }
+
+    @include lg {
+      padding: .5em 2em;
+      font-size: 2em;
+
+      .circle {
+        width: inherit;
+        height: inherit;
+      }
+      img {
+        width: 250px;
+        height: 250px;
+      }
+    }
+  }
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    line-height: 1.5em;
+
+    margin-top: 2em;
+
+    & > * {
+      flex-basis: 1.5em;
+    }
+
+    .content-title {
+      display: flex;
+      flex-direction: column;
+      font-size: 1.8em;
+      font-weight: 600;
+    }
+
+    .content-subtitle {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .content-icons {
+      margin: 1em;
+      font-size: 1.75em;
+      a {
+        position: relative;
+        margin: 0 .2em;
+        & > i {
+          transition: .5s;
+          text-shadow: 0 0 6px rgba(202,228,225,0.25);
+          &:hover {
+            transform: translateY(-1px);
+            text-shadow: 3px 0 2px rgba($darkThrd, 0.75), -3px 0 2px rgba($darkScnd, 0.75);
+          }
+          &:active {
+            transform: translateY(1px);
+          }
+        }
+      }
+    }
+
+    @include lg {
+      font-size: 1em;
+    }
+  }
+}

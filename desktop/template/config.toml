@@ -1,67 +1,51 @@
-base_url = "https://anemone.pages.dev"
-description = "A minimalist Zola theme that prioritizes clean CSS and avoids heavy JavaScript. Enjoy a seamless user experience with lightning-fast load times. Let your content take center stage in a clutter-free, elegant design that enhances readability. Responsive and efficient, anemone brings focus to your ideas."
-compile_sass = false
-minify_html = true
-generate_feed = true
+# The URL the site will be built for
+base_url = "localhost"
 
+# Whether to automatically compile all Sass files in the sass directory
+compile_sass = true
+
+# Whether to do syntax highlighting
+# Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
+highlight_code = true
+
+# Whether to build a search index to be used later on by a JavaScript library
+build_search_index = false
 default_language = "en"
+#languages = []
 
-taxonomies = [
-    {name = "tags", feed = true},
-]
-
-[languages.en]
-weight = 1
-title = "anemone"
-languageName = "English"
-languageCode = "en"
-relativeURL = false
-
-[languages.fr]
-weight = 2
-title = "anemone"
-languageName = "Français"
-languageCode = "fr"
-relativeURL = false
-
-taxonomies = [
-    {name = "tags", feed = true},
-]
-
-[markdown]
-render_emoji = true
-external_links_target_blank = true
-smart_punctuation = true
-highlight_code = false
-highlight_theme = "gruvbox-dark"
-
-[slugify]
-paths = "on"
-taxonomies = "on"
-anchors = "on"
-
-[link_checker]
-internal_level = "warn"
 
 [extra]
-author = "Speyll"
-favicon = "favicon.ico"
-image = ""
-list_pages = false
-twitter_card = true
+author = "Jon Snow"
+author_image="me.jpg"
+city="Winterfell"
+years="281"
 
-[[extra.header_nav]]
-en = { name = "/home/", url = "/" }
-fr = { name = "/accueil/", url = "/fr" }
+job = "The King in the North"
+description = "Dragons & Aunt ❤️"
 
-[[extra.header_nav]]
-en = { name = "/about/", url = "/about" }
-fr = { name = "/concernant/", url = "/about" }
+socials = [
+    { url = "", title="", icon = "fab fa-github"},
+    { url = "", title="", icon = "fab fa-twitter"},
+    { url = "", title="", icon = "fab fa-linkedin"},
+    { url = "mailto:", title="",icon = "fas fa-envelope"}
+]
 
-[[extra.header_nav]]
-en = { name = "/journal/", url = "/journal" }
-fr = { name = "/journal/", url = "/journal" }
+# if you add languages, put your emoji flag on array
+languages_flags = [
+    "🇬🇧"
+]
 
-[[extra.header_nav]]
-en = { name = "/blog/", url = "/blog" }
-fr = { name = "/blog/", url = "/blog" }
+[extra.profile]
+about = "I'm a software engineer"
+name = "John Doe"
+photo = "me.jpg"
+title = "Software Engineer"
+username = "j.doe"
+
+[[extra.links]]
+text = "Github"
+url = "https://github.com"
+
+[[extra.links]]
+text = "Mastodon"
+url = "https://mas.to"
