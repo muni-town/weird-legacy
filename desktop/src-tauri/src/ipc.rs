@@ -3,10 +3,7 @@ use std::fs::File;
 use log::{debug, warn};
 use serde_json::to_writer;
 use tauri::{
-    api::{
-        dialog::FileDialogBuilder,
-        path::home_dir,
-    },
+    api::{dialog::FileDialogBuilder, path::home_dir},
     command, AppHandle, Manager, State,
 };
 use toml::Value;
@@ -79,12 +76,7 @@ pub fn generate_site(state: State<'_, AppState>, handle: AppHandle) -> Result<()
     write_config(config, &config_path)?;
 
     // build Zola site with temp config
-    build_site(
-        &template_path,
-        &output_dir,
-        Some("/"),
-        &config_path,
-    )?;
+    build_site(&template_path, &output_dir, Some("/"), &config_path)?;
 
     // zip the website bundle.
     zip_dir(
@@ -117,7 +109,8 @@ pub fn set_template_path(state: State<'_, AppState>, handle: AppHandle) -> Resul
                         .app_config_dir()
                         .unwrap()
                         .join("config.json"),
-                ).expect("could not create or open file");
+                )
+                .expect("could not create or open file");
                 let config = Config {
                     template_path: path.clone(),
                 };

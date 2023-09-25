@@ -7,6 +7,7 @@ use ipc::{
     add_link, export_zip, generate_site, get_export_zip_base64, get_links, get_user, remove_link,
     set_template_path, toggle_preview_window, update_user,
 };
+use log::error;
 use prelude::*;
 use server::start_server;
 use state::{AppState, Config};
@@ -16,7 +17,6 @@ use std::{
     sync::{mpsc::sync_channel, Mutex},
 };
 use tauri::{Manager, WindowEvent};
-use log::error;
 #[cfg(debug_assertions)]
 use tracing::Level;
 

@@ -1,7 +1,7 @@
-use std::{sync::Mutex, path::PathBuf};
+use std::{path::PathBuf, sync::Mutex};
 
 use serde::{Deserialize, Serialize};
-use toml::{Table, Value, value::Array};
+use toml::{value::Array, Table, Value};
 use ts_rs::TS;
 
 use crate::prelude::*;
@@ -58,7 +58,10 @@ impl Profile {
         table.insert("username".into(), Value::String(self.username.clone()));
         table.insert("title".into(), Value::String(self.title.clone()));
         table.insert("about".into(), Value::String(self.about.clone()));
-        table.insert("photo".into(), Value::String(self.photo.clone().unwrap_or_default()));
+        table.insert(
+            "photo".into(),
+            Value::String(self.photo.clone().unwrap_or_default()),
+        );
 
         Value::Table(table)
     }
