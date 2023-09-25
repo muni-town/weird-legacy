@@ -16,13 +16,11 @@
       <span class="font-thin"> {{ config.extra.profile.about }} </span>
     </div>
 
-    <div class="">
+    <div class="content-links">
       {% for link in config.extra.links %}
-        <div class="font-medium">
-          <a href="{{ link.url }}" target="_blank" rel="noreferrer">
-            {{ link.text }}
-          </a>
-        </div>
+        <a class="link" href="{{ link.url }}" target="_blank" rel="noreferrer">
+          {{ link.text }}
+        </a>
       {% endfor %}
     </div>
 

@@ -37,6 +37,7 @@
 
 .homepage {
   text-align: center;
+  padding-top: 2rem;
   .img-profile-wrapper {
     margin: auto;
     border-radius: 50%;
@@ -101,6 +102,29 @@
     .content-subtitle {
       display: flex;
       flex-direction: column;
+    }
+
+    .content-links {
+      margin: 1em 0 1.2em 0;
+      .link {
+        margin-top: 1em;
+        border-radius: 4px;
+        border: 1px solid #aaa;
+        padding: 5px 0 5px 0;
+        display: block;
+
+        transition: .5s;
+        text-shadow: 0 0 6px rgba(202,228,225,0.25);
+
+        &:hover {
+          transform: translateY(-1px);
+          text-shadow: 3px 0 2px rgba($darkThrd, 0.75), -3px 0 2px rgba($darkScnd, 0.75);
+        }
+
+        &:active {
+          transform: translateY(1px);
+        }
+      }
     }
 
     .content-icons {
