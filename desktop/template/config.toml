@@ -15,14 +15,6 @@ default_language = "en"
 
 
 [extra]
-author = "Jon Snow"
-author_image="me.jpg"
-city="Winterfell"
-years="281"
-
-job = "The King in the North"
-description = "Dragons & Aunt ❤️"
-
 socials = [
     { url = "", title="", icon = "fab fa-github"},
     { url = "", title="", icon = "fab fa-twitter"},

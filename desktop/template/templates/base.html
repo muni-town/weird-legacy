@@ -5,9 +5,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title> {{config.extra.profile.name }} </title>
-  <meta name="author" content="{{ config.extra.author }}">
+  <meta name="author" content="{{ config.extra.profile.name }}">
   <meta name=description content="Personal website of a web developer using zola static generator website.">
-  <meta property="og:title" content="{{ config.extra.author }}">
+  <meta property="og:title" content="{{ config.extra.profile.name }}">
   <meta property="og:image" content="{{config.base_url ~ '/hello.png' }}">
   <meta property="og:description" content="Personal website of a web developer using zola static generator website.">
   <link rel="preload"  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -21,38 +21,6 @@
 
 <body>
   <div class="app">
-    <nav class="nav">
-      <a {% if current_path == "/" or current_path == "fr/" %} class="nav-item active" {% else %} class="nav_item" {% endif %}
-          {% if lang == "en" %} href="{{ config.base_url ~ '/' }}" {% else %} href="{{ config.base_url ~ '/' ~ lang}}" {% endif %}
-      >
-        <img src="{{ config.base_url ~ '/hello.png' }}" alt="hello" width="125" height="67">
-      </a>
-      <div class="nav-right">
-        <small class="languages">
-          {% set deflang = true %}
-          {% if config.languages %}
-          {% for lang in config.languages %}
-            {% if current_url is not containing(lang.code) %}
-              <a href="{{ current_url | replace(from=config.base_url, to=config.base_url ~ "/" ~ lang.code) }}">{{ config.extra.languages_flags[loop.index] }}</a>
-            {% else %}
-              <div class="active">{{ config.extra.languages_flags[loop.index] }} </div>
-              {% set_global deflang = false %}
-            {% endif %}
-          {% endfor %}
-          {% endif %}
-          {% if deflang %}
-            <div class="active">{{ config.extra.languages_flags[0] }}</div>
-          {% else %}
-            <a href="{{ current_url | replace(from=lang ~ "/", to="") }}">{{ config.extra.languages_flags[0] }}</a>
-          {% endif %}
-        </small>
-        <a {% if current_path is containing("/about") %}class="nav-item active"{% else %}class="nav-item"{% endif %}
-            {% if lang == "en" %} href="{{ config.base_url ~ '/about' }}" {% else %} href="{{ config.base_url ~ '/' ~ lang ~ '/about'}}" {% endif %}
-        >
-            <span> About me </span>
-        </a>
-      </div>
-    </nav>
     <main class="container">
       {% block content %} {% endblock %}
     </main>
