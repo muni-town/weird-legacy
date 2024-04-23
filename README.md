@@ -12,7 +12,7 @@ https://blog.erlend.sh/weird-web-pages
 
 ## Current state
 
-'Project Weird' has gone through several prototypical iterations over the past year. Our latest iteration – with which it feels like we're finally building on a firm foundation – is a local-first application built with Tauri + Svelte for the local-first frontend, and Zola for site geberation.
+'Project Weird' has gone through several prototypical iterations over the past year. Our latest iteration – with which it feels like we're finally building on a firm foundation – is a local-first application built with Tauri + Svelte for the local-first frontend, and Zola for site generation.
 
 This work is happening within the [`desktop`](https://github.com/commune-os/weird/tree/main/desktop) folder.
 
